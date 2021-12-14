@@ -52,6 +52,7 @@ namespace Music_Player
             this.btnDecrease = new System.Windows.Forms.Button();
             this.lblVolumeDisplay = new System.Windows.Forms.Label();
             this.btnMute = new System.Windows.Forms.Button();
+            this.deletePlaylistToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -197,34 +198,35 @@ namespace Music_Player
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.createPlaylistToolStripMenuItem,
+            this.deletePlaylistToolStripMenuItem,
             this.addMusicToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // createPlaylistToolStripMenuItem
             // 
             this.createPlaylistToolStripMenuItem.Name = "createPlaylistToolStripMenuItem";
-            this.createPlaylistToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.createPlaylistToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.createPlaylistToolStripMenuItem.Text = "Create Playlist";
             this.createPlaylistToolStripMenuItem.Click += new System.EventHandler(this.createPlaylistToolStripMenuItem_Click);
             // 
             // addMusicToolStripMenuItem
             // 
             this.addMusicToolStripMenuItem.Name = "addMusicToolStripMenuItem";
-            this.addMusicToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.addMusicToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.addMusicToolStripMenuItem.Text = "Add Music";
             this.addMusicToolStripMenuItem.Click += new System.EventHandler(this.addMusicToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(113, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             // 
             // musicIndex
@@ -292,6 +294,13 @@ namespace Music_Player
             this.btnMute.MouseEnter += new System.EventHandler(this.CursorChange);
             this.btnMute.MouseLeave += new System.EventHandler(this.CursorBack);
             // 
+            // deletePlaylistToolStripMenuItem
+            // 
+            this.deletePlaylistToolStripMenuItem.Name = "deletePlaylistToolStripMenuItem";
+            this.deletePlaylistToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deletePlaylistToolStripMenuItem.Text = "Delete Playlist";
+            this.deletePlaylistToolStripMenuItem.Click += new System.EventHandler(this.deletePlaylistToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -354,6 +363,7 @@ namespace Music_Player
         private System.Windows.Forms.Button btnDecrease;
         private System.Windows.Forms.Label lblVolumeDisplay;
         private System.Windows.Forms.Button btnMute;
+        private System.Windows.Forms.ToolStripMenuItem deletePlaylistToolStripMenuItem;
     }
 }
 

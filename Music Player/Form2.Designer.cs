@@ -70,7 +70,7 @@ namespace Music_Player
             // lblDisplay
             // 
             this.lblDisplay.AutoSize = true;
-            this.lblDisplay.Location = new System.Drawing.Point(8, 8);
+            this.lblDisplay.Location = new System.Drawing.Point(12, 8);
             this.lblDisplay.Name = "lblDisplay";
             this.lblDisplay.Size = new System.Drawing.Size(35, 13);
             this.lblDisplay.TabIndex = 4;

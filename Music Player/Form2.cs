@@ -19,13 +19,13 @@ namespace Music_Player
         {
             InitializeComponent();
 
-            string nameForm = value == 1 ? nameForm = "Create Playlist" : nameForm = "Add music";
+            string nameForm = value == 1 ? nameForm = "Create Playlist" : value == 2 ? nameForm = "Add music" : nameForm = "Delete Playlist";
 
             this.value = value;
 
             this.Text = nameForm;
 
-            lblDisplay.Text = value == 1 ? lblDisplay.Text = "The word Playlist will be added onto the end of the Playlist made" : lblDisplay.Text = "Here is where you can add the music";
+            lblDisplay.Text = value == 1 ? lblDisplay.Text = "The word Playlist will be added onto the end of the Playlist made" : value == 2 ? lblDisplay.Text = "Here is where you can add the music" : lblDisplay.Text = "Select playlist from the dropdown and then press\nthe Confirm button to \"Delete\" the playlist";
         }
 
         private void Form2_Load(object sender, EventArgs e)
@@ -51,12 +51,14 @@ namespace Music_Player
                 txtPlaylist.TabStop = false;
                 btnUpload.TabIndex = 0;
                 lblTellLength.Visible = false;
-                btnUpload.Enabled = false;
-                lblShowDo.Text = "Select a Playlist first!";
+                btnUpload.Enabled = false;              
                 cmbSelectPlaylist.TabIndex = 1;
                 cmbSelectPlaylist.DropDownStyle = ComboBoxStyle.DropDownList;
                 btnConfirm.TabIndex = 2;
                 btnCancel.TabIndex = 3;
+
+                btnUpload.Visible = value == 3 ? btnUpload.Visible = false : btnUpload.Visible = true;
+                lblShowDo.Text = value == 3 ? lblShowDo.Text = "" : lblShowDo.Text = "Select a Playlist first!";
 
                 string[] fileSplits;
 
@@ -94,7 +96,6 @@ namespace Music_Player
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
-            
         }
 
         private void txtPlaylist_KeyUp(object sender, KeyEventArgs e)
@@ -150,11 +151,18 @@ namespace Music_Player
 
         private void cmbSelectPlaylist_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbSelectPlaylist.SelectedItem != null)
+            if (value == 3)
             {
-                btnUpload.Enabled = true;
-                lblShowDo.Visible = false;
+                btnUpload.Enabled = cmbSelectPlaylist.SelectedItem != null ? btnUpload.Enabled = true : btnUpload.Enabled = false;
             }
+            else
+            {
+                if (cmbSelectPlaylist.SelectedItem != null)
+                {
+                    btnUpload.Enabled = true;
+                    lblShowDo.Visible = false;
+                }
+            }            
         }
     }
 }

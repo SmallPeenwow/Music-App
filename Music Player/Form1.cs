@@ -140,9 +140,9 @@ namespace Music_Player
                 {
                     if (folderName[i].Contains("Playlist"))
                     {
-                        fileSplits = folderName[i].Split(' ', '\\', ':');
+                        fileSplits = folderName[i].Split('\\', ':');
 
-                        ListSelecter.Items.Add(fileSplits[fileSplits.Length - 2]);
+                        ListSelecter.Items.Add(fileSplits[fileSplits.Length - 1].Replace("Playlist", "").Trim(' '));
                     }
                 }
             }
@@ -254,7 +254,6 @@ namespace Music_Player
             //if (answer == DialogResult.Yes)
             //{
                 int value = 1;
-
                 CreateMenuFileSave(value);
             //}
         }
@@ -273,7 +272,6 @@ namespace Music_Player
             //if (answer == DialogResult.Yes)
             //{
                 int value = 2;
-
                 CreateMenuFileSave(value);// Used to get form to add song
             //}
         }
@@ -299,6 +297,12 @@ namespace Music_Player
         {
 
             player.settings.mute = player.settings.mute;
+        }
+
+        private void deletePlaylistToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int value = 3;
+            CreateMenuFileSave(value);
         }
     }
 }
