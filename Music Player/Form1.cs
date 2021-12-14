@@ -15,8 +15,6 @@ namespace Music_Player
 {
     public partial class Form1 : Form
     {
-        System.Threading.Thread t;
-
         WindowsMediaPlayer player = new WindowsMediaPlayer();
 
         public string[] fileSplits;
@@ -74,6 +72,8 @@ namespace Music_Player
             musicIndex.Text = music;
             currentSonglbl.Text = music;
             currentSonglbl.Font = new Font("Microsoft Sans Serif", 10);
+            player.settings.volume = 60;
+            lblVolumeDisplay.Text = "Volume : " + player.settings.volume.ToString();
         }
 
         // Method that controls the Next and Previous button
@@ -114,6 +114,8 @@ namespace Music_Player
         private void stopBtn_Click(object sender, EventArgs e)
         {
             player.controls.stop();
+            currentSonglbl.Text = "";
+            lblVolumeDisplay.Text = "Volume :";
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -182,9 +184,9 @@ namespace Music_Player
                 {
                     if (files[i].Contains("mp3"))
                     {
-                        fileSplits = files[i].Split('\\', ':', '.');
+                        fileSplits = files[i].Split('\\', ':');
 
-                        musicListBox.Items.Add(fileSplits[fileSplits.Length - 2]);
+                        musicListBox.Items.Add(fileSplits[fileSplits.Length - 1].Replace(".mp3", ""));
                     }
                 }
             }
@@ -247,14 +249,14 @@ namespace Music_Player
         // File will be created and added to the Music Playlist file
         private void createPlaylistToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DialogResult answer = MessageBox.Show("You can create a new Playlist to store music in by selecting \'YES\'", "Create Playlist", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            //DialogResult answer = MessageBox.Show("You can create a new Playlist to store music in by selecting \'YES\'", "Create Playlist", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-            if (answer == DialogResult.Yes)
-            {
+            //if (answer == DialogResult.Yes)
+            //{
                 int value = 1;
 
                 CreateMenuFileSave(value);
-            }
+            //}
         }
 
         // This method is for creating files and for add songs
@@ -266,19 +268,37 @@ namespace Music_Player
 
         private void addMusicToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DialogResult answer = MessageBox.Show("You can add your Song to your Playlist by selecting \'YES\'", "Add Song", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            //DialogResult answer = MessageBox.Show("You can add your Song to your Playlist by selecting \'YES\'", "Add Song", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-            if (answer == DialogResult.Yes)
-            {
+            //if (answer == DialogResult.Yes)
+            //{
                 int value = 2;
 
                 CreateMenuFileSave(value);// Used to get form to add song
-            }
+            //}
         }
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnIncrease_Click(object sender, EventArgs e)
+        {
+            player.settings.volume += 1;
+            lblVolumeDisplay.Text = "Volume : " + player.settings.volume.ToString();
+        }
+
+        private void btnDecrease_Click(object sender, EventArgs e)
+        {
+            player.settings.volume -= 1;
+            lblVolumeDisplay.Text = "Volume : " + player.settings.volume.ToString();
+        }
+
+        private void btnMute_Click(object sender, EventArgs e)
+        {
+
+            player.settings.mute = player.settings.mute;
         }
     }
 }

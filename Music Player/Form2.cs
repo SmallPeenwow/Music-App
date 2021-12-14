@@ -94,6 +94,7 @@ namespace Music_Player
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
+            
         }
 
         private void txtPlaylist_KeyUp(object sender, KeyEventArgs e)
@@ -106,6 +107,7 @@ namespace Music_Player
             else
             {
                 btnConfirm.Enabled = false;
+                lblTellLength.Visible = true;
             }
         }
 
@@ -114,39 +116,31 @@ namespace Music_Player
             try
             {
                 string fileContent;
-
                 OpenFileDialog openFile = new OpenFileDialog();
-                //SaveFileDialog openFile = new SaveFileDialog();
 
                 string filePath = Environment.SpecialFolder.UserProfile + "\\Downloads";
                 openFile.InitialDirectory = filePath;
                 openFile.Title = "Add Song";
                 openFile.Filter = "Music(.mp3)|*.mp3";
-                openFile.RestoreDirectory = true;
 
                 if (openFile.ShowDialog() == DialogResult.OK)
-                {
-                    string newFileLocation = @"C:\Music App\Music Playlists\" + cmbSelectPlaylist.SelectedItem.ToString() + " Playlist";
+                {                   
+                    string fileSong = openFile.FileName.Split('\\').Last();
 
-                    //fileContent = openFile.FileName.Split('\\').Last();
-                    fileContent = openFile.FileName;
+                    if (fileSong.Contains(".mp3"))
+                    {
+                        fileContent = openFile.FileName;
 
-                    string dest = Path.Combine(newFileLocation, fileContent);
-                    
+                        string newFileLocation = @"C:\Music App\Music Playlists\" + cmbSelectPlaylist.SelectedItem.ToString() + " Playlist\\" + fileSong;
 
-                    File.Copy(fileContent, newFileLocation);
-                    //Directory.Move(fileContent, newFileLocation);
-                    
-
-                    //string tempPath = Path.Combine(newFileLocation, fileContent);
-                    //File.Copy(newFileLocation, tempPath);
-
-                    
-
-                    MessageBox.Show("Song was added successfully", "Success", MessageBoxButtons.OK);
-                }
-                           
-                //this.Close();
+                        File.Move(fileContent, newFileLocation);
+                        MessageBox.Show("Song was added successfully", "Success", MessageBoxButtons.OK);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Select a Song that is a  \"mp3\"", "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }                                         
             }
             catch (Exception fileOpenError)
             {

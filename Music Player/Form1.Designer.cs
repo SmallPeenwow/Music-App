@@ -34,7 +34,6 @@ namespace Music_Player
             this.pause = new System.Windows.Forms.Button();
             this.previousBtn = new System.Windows.Forms.Button();
             this.nextBtn = new System.Windows.Forms.Button();
-            this.timeLbl = new System.Windows.Forms.Label();
             this.musicListBox = new System.Windows.Forms.ListBox();
             this.ListSelecter = new System.Windows.Forms.ComboBox();
             this.playSelectlbl = new System.Windows.Forms.Label();
@@ -51,13 +50,15 @@ namespace Music_Player
             this.currentSonglbl = new System.Windows.Forms.Label();
             this.btnIncrease = new System.Windows.Forms.Button();
             this.btnDecrease = new System.Windows.Forms.Button();
+            this.lblVolumeDisplay = new System.Windows.Forms.Label();
+            this.btnMute = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // playBtn
             // 
             this.playBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.playBtn.Location = new System.Drawing.Point(15, 139);
+            this.playBtn.Location = new System.Drawing.Point(15, 134);
             this.playBtn.Name = "playBtn";
             this.playBtn.Size = new System.Drawing.Size(100, 25);
             this.playBtn.TabIndex = 2;
@@ -70,7 +71,7 @@ namespace Music_Player
             // stopBtn
             // 
             this.stopBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.stopBtn.Location = new System.Drawing.Point(15, 185);
+            this.stopBtn.Location = new System.Drawing.Point(15, 165);
             this.stopBtn.Name = "stopBtn";
             this.stopBtn.Size = new System.Drawing.Size(100, 25);
             this.stopBtn.TabIndex = 3;
@@ -84,7 +85,7 @@ namespace Music_Player
             // pause
             // 
             this.pause.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.pause.Location = new System.Drawing.Point(15, 229);
+            this.pause.Location = new System.Drawing.Point(15, 196);
             this.pause.Name = "pause";
             this.pause.Size = new System.Drawing.Size(100, 25);
             this.pause.TabIndex = 4;
@@ -98,11 +99,11 @@ namespace Music_Player
             // previousBtn
             // 
             this.previousBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.previousBtn.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.previousBtn.Cursor = System.Windows.Forms.Cursors.Default;
             this.previousBtn.Location = new System.Drawing.Point(204, 350);
             this.previousBtn.Name = "previousBtn";
             this.previousBtn.Size = new System.Drawing.Size(75, 25);
-            this.previousBtn.TabIndex = 5;
+            this.previousBtn.TabIndex = 6;
             this.previousBtn.Text = "Previous";
             this.previousBtn.UseVisualStyleBackColor = true;
             this.previousBtn.Click += new System.EventHandler(this.previousBtn_Click);
@@ -116,22 +117,13 @@ namespace Music_Player
             this.nextBtn.Location = new System.Drawing.Point(278, 350);
             this.nextBtn.Name = "nextBtn";
             this.nextBtn.Size = new System.Drawing.Size(75, 25);
-            this.nextBtn.TabIndex = 6;
+            this.nextBtn.TabIndex = 7;
             this.nextBtn.Text = "Next";
             this.nextBtn.UseVisualStyleBackColor = true;
             this.nextBtn.Click += new System.EventHandler(this.nextBtn_Click);
             this.nextBtn.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
             this.nextBtn.MouseEnter += new System.EventHandler(this.CursorChange);
             this.nextBtn.MouseLeave += new System.EventHandler(this.CursorBack);
-            // 
-            // timeLbl
-            // 
-            this.timeLbl.AutoSize = true;
-            this.timeLbl.Location = new System.Drawing.Point(216, 112);
-            this.timeLbl.Name = "timeLbl";
-            this.timeLbl.Size = new System.Drawing.Size(97, 13);
-            this.timeLbl.TabIndex = 5;
-            this.timeLbl.Text = "Time to show here!";
             // 
             // musicListBox
             // 
@@ -207,32 +199,32 @@ namespace Music_Player
             this.createPlaylistToolStripMenuItem,
             this.addMusicToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // createPlaylistToolStripMenuItem
             // 
             this.createPlaylistToolStripMenuItem.Name = "createPlaylistToolStripMenuItem";
-            this.createPlaylistToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.createPlaylistToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.createPlaylistToolStripMenuItem.Text = "Create Playlist";
             this.createPlaylistToolStripMenuItem.Click += new System.EventHandler(this.createPlaylistToolStripMenuItem_Click);
             // 
             // addMusicToolStripMenuItem
             // 
             this.addMusicToolStripMenuItem.Name = "addMusicToolStripMenuItem";
-            this.addMusicToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.addMusicToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.addMusicToolStripMenuItem.Text = "Add Music";
             this.addMusicToolStripMenuItem.Click += new System.EventHandler(this.addMusicToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(113, 6);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             // 
             // musicIndex
@@ -257,24 +249,56 @@ namespace Music_Player
             this.btnIncrease.Location = new System.Drawing.Point(15, 285);
             this.btnIncrease.Name = "btnIncrease";
             this.btnIncrease.Size = new System.Drawing.Size(100, 23);
-            this.btnIncrease.TabIndex = 7;
+            this.btnIncrease.TabIndex = 8;
             this.btnIncrease.Text = "Volume Up";
             this.btnIncrease.UseVisualStyleBackColor = true;
+            this.btnIncrease.Click += new System.EventHandler(this.btnIncrease_Click);
+            this.btnIncrease.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
+            this.btnIncrease.MouseEnter += new System.EventHandler(this.CursorChange);
+            this.btnIncrease.MouseLeave += new System.EventHandler(this.CursorBack);
             // 
             // btnDecrease
             // 
             this.btnDecrease.Location = new System.Drawing.Point(15, 310);
             this.btnDecrease.Name = "btnDecrease";
             this.btnDecrease.Size = new System.Drawing.Size(100, 23);
-            this.btnDecrease.TabIndex = 8;
+            this.btnDecrease.TabIndex = 9;
             this.btnDecrease.Text = "Volume Down";
             this.btnDecrease.UseVisualStyleBackColor = true;
+            this.btnDecrease.Click += new System.EventHandler(this.btnDecrease_Click);
+            this.btnDecrease.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
+            this.btnDecrease.MouseEnter += new System.EventHandler(this.CursorChange);
+            this.btnDecrease.MouseLeave += new System.EventHandler(this.CursorBack);
+            // 
+            // lblVolumeDisplay
+            // 
+            this.lblVolumeDisplay.AutoSize = true;
+            this.lblVolumeDisplay.Location = new System.Drawing.Point(70, 336);
+            this.lblVolumeDisplay.Name = "lblVolumeDisplay";
+            this.lblVolumeDisplay.Size = new System.Drawing.Size(48, 13);
+            this.lblVolumeDisplay.TabIndex = 14;
+            this.lblVolumeDisplay.Text = "Volume :";
+            // 
+            // btnMute
+            // 
+            this.btnMute.Location = new System.Drawing.Point(15, 228);
+            this.btnMute.Name = "btnMute";
+            this.btnMute.Size = new System.Drawing.Size(100, 23);
+            this.btnMute.TabIndex = 5;
+            this.btnMute.Text = "Mute";
+            this.btnMute.UseVisualStyleBackColor = true;
+            this.btnMute.Click += new System.EventHandler(this.btnMute_Click);
+            this.btnMute.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
+            this.btnMute.MouseEnter += new System.EventHandler(this.CursorChange);
+            this.btnMute.MouseLeave += new System.EventHandler(this.CursorBack);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(677, 387);
+            this.Controls.Add(this.btnMute);
+            this.Controls.Add(this.lblVolumeDisplay);
             this.Controls.Add(this.btnDecrease);
             this.Controls.Add(this.btnIncrease);
             this.Controls.Add(this.currentSonglbl);
@@ -284,7 +308,6 @@ namespace Music_Player
             this.Controls.Add(this.playSelectlbl);
             this.Controls.Add(this.ListSelecter);
             this.Controls.Add(this.musicListBox);
-            this.Controls.Add(this.timeLbl);
             this.Controls.Add(this.nextBtn);
             this.Controls.Add(this.previousBtn);
             this.Controls.Add(this.pause);
@@ -313,7 +336,6 @@ namespace Music_Player
         private System.Windows.Forms.Button pause;
         private System.Windows.Forms.Button previousBtn;
         private System.Windows.Forms.Button nextBtn;
-        private System.Windows.Forms.Label timeLbl;
         private System.Windows.Forms.ListBox musicListBox;
         private System.Windows.Forms.ComboBox ListSelecter;
         private System.Windows.Forms.Label playSelectlbl;
@@ -330,6 +352,8 @@ namespace Music_Player
         private System.Windows.Forms.Label currentSonglbl;
         private System.Windows.Forms.Button btnIncrease;
         private System.Windows.Forms.Button btnDecrease;
+        private System.Windows.Forms.Label lblVolumeDisplay;
+        private System.Windows.Forms.Button btnMute;
     }
 }
 
