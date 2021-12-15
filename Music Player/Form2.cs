@@ -68,29 +68,46 @@ namespace Music_Player
                 {
                     if (folderName[i].Contains("Playlist"))
                     {
-                        fileSplits = folderName[i].Split(' ', '\\', ':');
+                        fileSplits = folderName[i].Split('\\', ':');
 
-                        cmbSelectPlaylist.Items.Add(fileSplits[fileSplits.Length - 2]);
+                        cmbSelectPlaylist.Items.Add(fileSplits[fileSplits.Length - 1]);
                     }
                 }
             }
         }
 
         private void btnConfirm_Click(object sender, EventArgs e)
-        {
-            if(string.IsNullOrWhiteSpace(txtPlaylist.Text) || Directory.Exists(txtPlaylist.Text)) // !(txtPlaylist.Text.Contains("Playlist")) Could do this
+        {          
+            if(value == 1)
             {
-                MessageBox.Show("Make sure you have entered in a valid Playlist name longer than 3 characters\n\nPlaylist could already Exist", "Not Correct", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (string.IsNullOrWhiteSpace(txtPlaylist.Text) || Directory.Exists(txtPlaylist.Text)) // !(txtPlaylist.Text.Contains("Playlist")) Could do this
+                {
+                    MessageBox.Show("Make sure you have entered in a valid Playlist name longer than 3 characters\n\nPlaylist could already Exist", "Not Correct", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    string newPath = @"C:\Music App\Music Playlists\" + txtPlaylist.Text + " Playlist";
+
+                    Directory.CreateDirectory(newPath);
+
+                    MessageBox.Show("Playlist was Created", "Success", MessageBoxButtons.OK);
+                    this.Close();
+                }              
             }
-            else if(value == 1)
+            else
             {
-                string newPath = @"C:\Music App\Music Playlists\" + txtPlaylist.Text + " Playlist";
+                try
+                {
+                    string deletePath = @"C:\Music App\Music Playlists\" + cmbSelectPlaylist.Text;
 
-                Directory.CreateDirectory(newPath);
-
-                MessageBox.Show("Playlist was created", "Success", MessageBoxButtons.OK);
-                this.Close();
-            }        
+                    Directory.Delete(deletePath, true);
+                    MessageBox.Show("Playlist was Deleted", "Success", MessageBoxButtons.OK);
+                }
+                catch(Exception error)
+                {
+                    MessageBox.Show("failed " + error);
+                }              
+            }         
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -153,7 +170,7 @@ namespace Music_Player
         {
             if (value == 3)
             {
-                btnUpload.Enabled = cmbSelectPlaylist.SelectedItem != null ? btnUpload.Enabled = true : btnUpload.Enabled = false;
+                btnConfirm.Enabled = cmbSelectPlaylist.SelectedIndex != -1 ? btnConfirm.Enabled = true : btnConfirm.Enabled = false;
             }
             else
             {

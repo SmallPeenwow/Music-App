@@ -21,6 +21,8 @@ namespace Music_Player
         
         double time = 0;
 
+        Dictionary<string, string> musicValue = new Dictionary<string, string>();
+
         public Form1()
         {
             InitializeComponent();         
@@ -36,7 +38,7 @@ namespace Music_Player
                 {
                     player.controls.play();
                 }
-                else if (!(musicListBox.SelectedIndex == -1) && !(storeOfPlayListSelect.Text == null))
+                else if (!(musicListBox.SelectedIndex == -1) && !(storeOfPlayListSelect.Text == ""))
                 {
                     string playSelected = musicListBox.SelectedItem.ToString(); 
                     string playlistSelected = storeOfPlayListSelect.Text.ToString();                    
@@ -121,34 +123,62 @@ namespace Music_Player
         private void Form1_Load(object sender, EventArgs e)
         {
             errorDisplayMesslbl.Font = new Font("Arial", 14, FontStyle.Underline);
-
+    
             ListSelecter.DropDownStyle = ComboBoxStyle.DropDownList;
             playSelectlbl.Text = "Select Playlist";
 
             storeOfPlayListSelect.Enabled = false;
-            storeOfPlayListSelect.Visible = false;
+            //storeOfPlayListSelect.Visible = false;
             musicIndex.Enabled = false;
-            musicIndex.Visible = false;
+            //musicIndex.Visible = false;
             musicListBox.SelectionMode = SelectionMode.One;
-            currentSonglbl.Text = "";
+            currentSonglbl.Text = "";          
 
             try
-            {
-                string[] folderName = Directory.GetDirectories(@"C:\Music App\Music Playlists", "*", SearchOption.AllDirectories);
-
-                for (int i = 0; i < folderName.Length; i++)
-                {
-                    if (folderName[i].Contains("Playlist"))
-                    {
-                        fileSplits = folderName[i].Split('\\', ':');
-
-                        ListSelecter.Items.Add(fileSplits[fileSplits.Length - 1].Replace("Playlist", "").Trim(' '));
-                    }
-                }
+            {                
+                loadPlaylistSongs();
             }
             catch (Exception fail)
             {
                 MessageBox.Show("Couldn't load music list" + fail, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void loadPlaylistSongs()
+        {
+            musicValue.Clear();
+            musicListBox.Items.Clear();
+            ListSelecter.Items.Add("All");
+
+            string[] folderName = Directory.GetDirectories(@"C:\Music App\Music Playlists", "*", SearchOption.AllDirectories);
+
+            string[] files;
+
+            for (int i = 0; i < folderName.Length; i++)
+            {
+                if (folderName[i].Contains("Playlist"))
+                {
+                    fileSplits = folderName[i].Split('\\', ':');
+
+                    ListSelecter.Items.Add(fileSplits[fileSplits.Length - 1].Replace("Playlist", "").Trim(' '));
+
+                    files = Directory.GetFiles(folderName[i]);
+
+                    for (int j = 0; j < files.Length; j++)
+                    {
+                        if (files[j].Contains("mp3"))
+                        {
+                            string[] splitFiles = files[j].Split('\\', ':');
+
+                            string song = splitFiles[splitFiles.Length - 1].Replace(".mp3", "");
+                            string playlist = splitFiles[splitFiles.Length - 2].Replace(".mp3", "");
+
+                            musicListBox.Items.Add(song);
+
+                            musicValue.Add(song, playlist);                         
+                        }
+                    }
+                }
             }
         }
 
@@ -172,23 +202,30 @@ namespace Music_Player
         {
             try
             {
-                musicListBox.Items.Clear();
-
-                string playlistSelected = ListSelecter.SelectedItem.ToString();
-
-                storeOfPlayListSelect.Text = playlistSelected;
-
-                string[] files = Directory.GetFiles(@"C:\Music App\Music Playlists\" + playlistSelected + " Playlist");
-
-                for (int i = 0; i < files.Length; i++)
+                if (ListSelecter.SelectedItem.Equals("All"))
                 {
-                    if (files[i].Contains("mp3"))
-                    {
-                        fileSplits = files[i].Split('\\', ':');
-
-                        musicListBox.Items.Add(fileSplits[fileSplits.Length - 1].Replace(".mp3", ""));
-                    }
+                    ListSelecter.Items.Clear();
+                    storeOfPlayListSelect.Text = "All";
+                    loadPlaylistSongs();
                 }
+                else
+                {
+                    musicListBox.Items.Clear();
+
+                    string playlistSelected = ListSelecter.SelectedItem.ToString();
+
+                    string[] files = Directory.GetFiles(@"C:\Music App\Music Playlists\" + playlistSelected + " Playlist");
+
+                    for (int i = 0; i < files.Length; i++)
+                    {
+                        if (files[i].Contains("mp3"))
+                        {
+                            fileSplits = files[i].Split('\\', ':');
+
+                            musicListBox.Items.Add(fileSplits[fileSplits.Length - 1].Replace(".mp3", ""));
+                        }
+                    }
+                }                
             }
             catch (Exception loadFail)
             {
@@ -201,23 +238,76 @@ namespace Music_Player
             errorDisplayMesslbl.Text = null;
         }
 
+        private String tryGetValuePlaylist(string value)
+        {
+            string result;
+            if (musicValue.TryGetValue(value, out result))
+            {
+                string[] resultSplit = result.Split(' ');
+                value = resultSplit[0];
+                storeOfPlayListSelect.Text = value;
+            }
+            return value;
+        }
+
+        private String getPlaylistForPlaying(string value)
+        {
+            
+            if (storeOfPlayListSelect.Text != "" && value == "")
+            {              
+                value = tryGetValuePlaylist(musicListBox.SelectedItem.ToString());
+            }
+            else
+            {
+                value = tryGetValuePlaylist(value);
+            }
+
+            return value;
+        }
+
+        private String getPlaylistForPlaying(string value, int number)
+        {
+            int num = 0;
+
+            for (int i = 0; i < musicValue.Count; i++)
+            {
+                if (musicValue.ElementAt(i).Key == value)
+                {
+                    num = i;
+                    break;
+                }
+            }
+            //int num = Array.IndexOf(musicValue.Keys.ToArray(), value);
+            num = number == 1 ? num + 1 : num - 1;
+            value = musicValue.Keys.ElementAt(num);
+
+            value = tryGetValuePlaylist(value);
+            
+            return value;
+        }
+
         private void musicListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            string playlistSelected = "";
+            playlistSelected = getPlaylistForPlaying(playlistSelected);
+                     
             // Sets the time of the song to zero so the current song select by the user can be played
-            if (musicListBox.SelectedIndex > -1) 
+            if (musicListBox.SelectedIndex > -1)
             {
                 time = 0;
             }
+
+            storeOfPlayListSelect.Text = playlistSelected;
         }
 
         // Checks for values and then sends to playMusic method
         private void nextBtn_Click(object sender, EventArgs e)
         {       
-            if (!(musicListBox.SelectedIndex == -1) && !(storeOfPlayListSelect.Text == null) && !(musicIndex.Text == null))
+            if (!(musicListBox.SelectedIndex == -1) && !(storeOfPlayListSelect.Text == "") && !(musicIndex.Text == ""))
             {
-                string playSelected = musicIndex.Text.ToString();
-                string playlistSelected = storeOfPlayListSelect.Text.ToString();
                 int nextNumber = 1;
+                string playSelected = player.currentMedia.name;
+                string playlistSelected = getPlaylistForPlaying(playSelected, nextNumber);               
 
                 playMusic(playSelected, playlistSelected, nextNumber);
             }
@@ -231,11 +321,11 @@ namespace Music_Player
         // Checks for values and then sends to playMusic method
         private void previousBtn_Click(object sender, EventArgs e)
         {
-            if (!(musicListBox.SelectedIndex == -1) && !(storeOfPlayListSelect.Text == null) && !(musicIndex.Text == null))
+            if (!(musicListBox.SelectedIndex == -1) && !(storeOfPlayListSelect.Text == "") && !(musicIndex.Text == ""))
             {
-                string playSelected = musicIndex.Text.ToString();
-                string playlistSelected = storeOfPlayListSelect.Text.ToString();
                 int nextNumber = 2;
+                string playSelected = player.currentMedia.name;
+                string playlistSelected = getPlaylistForPlaying(playSelected, nextNumber);              
 
                 playMusic(playSelected, playlistSelected, nextNumber); 
             }
@@ -249,13 +339,8 @@ namespace Music_Player
         // File will be created and added to the Music Playlist file
         private void createPlaylistToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //DialogResult answer = MessageBox.Show("You can create a new Playlist to store music in by selecting \'YES\'", "Create Playlist", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            //if (answer == DialogResult.Yes)
-            //{
-                int value = 1;
-                CreateMenuFileSave(value);
-            //}
+            int value = 1;
+            CreateMenuFileSave(value);
         }
 
         // This method is for creating files and for add songs
@@ -267,13 +352,8 @@ namespace Music_Player
 
         private void addMusicToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //DialogResult answer = MessageBox.Show("You can add your Song to your Playlist by selecting \'YES\'", "Add Song", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            //if (answer == DialogResult.Yes)
-            //{
-                int value = 2;
-                CreateMenuFileSave(value);// Used to get form to add song
-            //}
+            int value = 2;
+            CreateMenuFileSave(value);// Used to get form to add song
         }
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
