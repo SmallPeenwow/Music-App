@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using WMPLib;
-using System.Drawing.Drawing2D;
+using System.Collections;
 
 namespace Music_Player
 {
@@ -21,7 +21,7 @@ namespace Music_Player
         
         double time = 0;
 
-        Dictionary<string, string> musicValue = new Dictionary<string, string>();
+        IDictionary<string, string> musicValue = new Dictionary<string, string>();
 
         public Form1()
         {
@@ -128,9 +128,9 @@ namespace Music_Player
             playSelectlbl.Text = "Select Playlist";
 
             storeOfPlayListSelect.Enabled = false;
-            //storeOfPlayListSelect.Visible = false;
+            storeOfPlayListSelect.Visible = false;
             musicIndex.Enabled = false;
-            //musicIndex.Visible = false;
+            musicIndex.Visible = false;
             musicListBox.SelectionMode = SelectionMode.One;
             currentSonglbl.Text = "";          
 
@@ -210,9 +210,11 @@ namespace Music_Player
                 }
                 else
                 {
+                    musicValue.Clear();
                     musicListBox.Items.Clear();
 
                     string playlistSelected = ListSelecter.SelectedItem.ToString();
+                    storeOfPlayListSelect.Text = playlistSelected;
 
                     string[] files = Directory.GetFiles(@"C:\Music App\Music Playlists\" + playlistSelected + " Playlist");
 
@@ -222,7 +224,9 @@ namespace Music_Player
                         {
                             fileSplits = files[i].Split('\\', ':');
 
-                            musicListBox.Items.Add(fileSplits[fileSplits.Length - 1].Replace(".mp3", ""));
+                            string song = fileSplits[fileSplits.Length - 1].Replace(".mp3", "");
+                            musicListBox.Items.Add(song);
+                            musicValue.Add(song, playlistSelected);
                         }
                     }
                 }                
@@ -238,57 +242,39 @@ namespace Music_Player
             errorDisplayMesslbl.Text = null;
         }
 
-        private String tryGetValuePlaylist(string value)
-        {
-            string result;
-            if (musicValue.TryGetValue(value, out result))
-            {
-                string[] resultSplit = result.Split(' ');
-                value = resultSplit[0];
-                storeOfPlayListSelect.Text = value;
-            }
-            return value;
-        }
-
         private String getPlaylistForPlaying(string value)
         {
-            
-            if (storeOfPlayListSelect.Text != "" && value == "")
-            {              
-                value = tryGetValuePlaylist(musicListBox.SelectedItem.ToString());
-            }
-            else
-            {
-                value = tryGetValuePlaylist(value);
-            }
+            value = musicListBox.SelectedItem.ToString();
+
+            value = musicValue[value].ToString();
+
+            string[] resultSplit = value.Split(' ');
+            value = resultSplit[0];
 
             return value;
         }
 
         private String getPlaylistForPlaying(string value, int number)
-        {
-            int num = 0;
+        {                           
+            int num = Array.IndexOf(musicValue.Keys.ToArray(), value);
 
-            for (int i = 0; i < musicValue.Count; i++)
-            {
-                if (musicValue.ElementAt(i).Key == value)
-                {
-                    num = i;
-                    break;
-                }
-            }
-            //int num = Array.IndexOf(musicValue.Keys.ToArray(), value);
-            num = number == 1 ? num + 1 : num - 1;
-            value = musicValue.Keys.ElementAt(num);
+            num = number == 1 ? num + 1 : num - 1;         
 
-            value = tryGetValuePlaylist(value);
+            num = num > musicValue.Count - 1 ? num = 0 : num < 0 ? num = Array.IndexOf(musicValue.Keys.ToArray(), musicValue.Keys.Last()) : num;
+
+            value = musicValue.ElementAt(num).Value;
+
+            string[] resultSplit = value.Split(' ');
+            value = resultSplit[0];
+
+            storeOfPlayListSelect.Text = value;
             
             return value;
         }
 
         private void musicListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string playlistSelected = "";
+            string playlistSelected = "";           
             playlistSelected = getPlaylistForPlaying(playlistSelected);
                      
             // Sets the time of the song to zero so the current song select by the user can be played
@@ -306,7 +292,7 @@ namespace Music_Player
             if (!(musicListBox.SelectedIndex == -1) && !(storeOfPlayListSelect.Text == "") && !(musicIndex.Text == ""))
             {
                 int nextNumber = 1;
-                string playSelected = player.currentMedia.name;
+                string playSelected = musicIndex.Text;
                 string playlistSelected = getPlaylistForPlaying(playSelected, nextNumber);               
 
                 playMusic(playSelected, playlistSelected, nextNumber);
@@ -324,7 +310,7 @@ namespace Music_Player
             if (!(musicListBox.SelectedIndex == -1) && !(storeOfPlayListSelect.Text == "") && !(musicIndex.Text == ""))
             {
                 int nextNumber = 2;
-                string playSelected = player.currentMedia.name;
+                string playSelected = musicIndex.Text;
                 string playlistSelected = getPlaylistForPlaying(playSelected, nextNumber);              
 
                 playMusic(playSelected, playlistSelected, nextNumber); 
