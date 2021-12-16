@@ -237,7 +237,7 @@ namespace Music_Player
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
@@ -287,7 +287,7 @@ namespace Music_Player
             // lblVolumeDisplay
             // 
             this.lblVolumeDisplay.AutoSize = true;
-            this.lblVolumeDisplay.Location = new System.Drawing.Point(234, 184);
+            this.lblVolumeDisplay.Location = new System.Drawing.Point(220, 184);
             this.lblVolumeDisplay.Name = "lblVolumeDisplay";
             this.lblVolumeDisplay.Size = new System.Drawing.Size(48, 13);
             this.lblVolumeDisplay.TabIndex = 14;

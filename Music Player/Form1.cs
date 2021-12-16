@@ -18,11 +18,12 @@ namespace Music_Player
         WindowsMediaPlayer player = new WindowsMediaPlayer();
 
         public string[] fileSplits;
+
+        Timer timer = new Timer();
         
-        double time = 0;
-        int loopSong = 0; // Will loop over one song or playlist
-        double percent = 0; // Is the amount of time the song plays for
-        int numberForVolume = 1;     
+        double time = 0; // Used to store the current position of time in the song
+
+        int numberForVolume = 1; // Used to increment and decrement   
 
         IDictionary<string, string> musicValue = new Dictionary<string, string>();
 
@@ -40,6 +41,7 @@ namespace Music_Player
                 if(time != 0)
                 {
                     player.controls.play();
+                    timer.Start();
                 }
                 else if (!(musicListBox.SelectedIndex == -1) && !(storeOfPlayListSelect.Text == ""))
                 {
@@ -55,13 +57,9 @@ namespace Music_Player
                     errorDisplayMesslbl.Text = "Make sure a Song and Playlist are selected.";
                 }
             }
-            catch (NullReferenceException emtpy)
-            {
-                MessageBox.Show("Empty" + emtpy, "Fail", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
             catch (Exception error)
             {
-                MessageBox.Show("Not working", "Fail", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Not working " + error, "Fail", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
         }
@@ -73,13 +71,16 @@ namespace Music_Player
             player.URL = willPlay;
 
             player.controls.play();
-
+            
             musicIndex.Text = music;
             currentSonglbl.Text = music;
             currentSonglbl.Font = new Font("Microsoft Sans Serif", 10);
             player.settings.volume = 40;
             lblVolumeDisplay.Text = "Volume : " + player.settings.volume.ToString();
-            //timeToDisplay.Start();
+
+            timer.Interval = 400;
+            timer.Tick += new EventHandler(timer1_Tick);
+            timer.Start();
         }
 
         // Method that controls the Next and Previous button
@@ -122,12 +123,15 @@ namespace Music_Player
             player.controls.stop();
             currentSonglbl.Text = "";
             lblVolumeDisplay.Text = "Volume :";
+
+            lblsongDuration.Text = "";
+            timer.Stop();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             errorDisplayMesslbl.Font = new Font("Arial", 14, FontStyle.Underline);
-    
+            lblVolumeDisplay.Font = new Font("Microsoft Sans Serif", 10);
             ListSelecter.DropDownStyle = ComboBoxStyle.DropDownList;
             playSelectlbl.Text = "Select Playlist";
 
@@ -190,6 +194,8 @@ namespace Music_Player
         {
             time = player.controls.currentPosition;
             player.controls.pause();
+
+            timer.Stop();
         }
 
         private void CursorChange(object sender, EventArgs e)
@@ -278,8 +284,11 @@ namespace Music_Player
 
         private void musicListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string playlistSelected = "";           
-            playlistSelected = getPlaylistForPlaying(playlistSelected);
+            string playlistSelected = "";
+            if (musicListBox.SelectedIndex != -1) 
+            {
+                playlistSelected = getPlaylistForPlaying(playlistSelected);
+            }        
                      
             // Sets the time of the song to zero so the current song select by the user can be played
             if (musicListBox.SelectedIndex > -1)
@@ -386,40 +395,17 @@ namespace Music_Player
 
         private void btnLoopSongs_Click(object sender, EventArgs e)
         {
-            btnLoopSongs.TextAlign = ContentAlignment.MiddleLeft;
-            loopSong += 1;
-            if (loopSong == 1)
-            {
-                player.settings.setMode("loop", true);
-                btnLoopSongs.Text = "Looping Song";
-            }
-            //else if (loopSong == 2)
-            //{
-                
-            //}
-            else
-            {
-                loopSong = 0;
-            }
-            
+            player.settings.setMode("loop", true);
+            btnLoopSongs.Text = "Looping Song";       
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            //timeToDisplay.Interval = (int)player.currentMedia.duration * 10000;
-            //timeToDisplay.Tick += new System.EventHandler(this.timer1_Tick);
-            //lblsongDuration.Text = player.currentMedia.durationString;
-            //timeToDisplay.Start();
-            percent = player.currentMedia.duration;
-            TimeSpan songSeconds = new TimeSpan();            
-
-            while(songSeconds != TimeSpan.FromSeconds(percent))
-            {
-                double now = player.controls.currentPosition;
-                songSeconds = TimeSpan.FromSeconds(now);
-                lblsongDuration.Text = songSeconds.ToString(@"mm\:ss");
-            }
-            timeToDisplay.Stop();
+            TimeSpan songSeconds = new TimeSpan();
+            lblsongDuration.Font = new Font("Microsoft Sans Serif", 10);
+            double now = player.controls.currentPosition;
+            songSeconds = TimeSpan.FromSeconds(now);
+            lblsongDuration.Text = songSeconds.ToString(@"mm\:ss");          
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
