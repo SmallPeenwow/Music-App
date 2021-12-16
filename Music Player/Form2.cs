@@ -18,7 +18,7 @@ namespace Music_Player
         public Form2(int value)
         {
             InitializeComponent();
-
+            
             string nameForm = value == 1 ? nameForm = "Create Playlist" : value == 2 ? nameForm = "Add music" : nameForm = "Delete Playlist";
 
             this.value = value;

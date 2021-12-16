@@ -20,12 +20,15 @@ namespace Music_Player
         public string[] fileSplits;
         
         double time = 0;
+        int loopSong = 0; // Will loop over one song or playlist
+        double percent = 0; // Is the amount of time the song plays for
+        int numberForVolume = 1;     
 
         IDictionary<string, string> musicValue = new Dictionary<string, string>();
 
         public Form1()
         {
-            InitializeComponent();         
+            InitializeComponent();
         }
 
         // The song is the " playSelected " variable
@@ -74,8 +77,9 @@ namespace Music_Player
             musicIndex.Text = music;
             currentSonglbl.Text = music;
             currentSonglbl.Font = new Font("Microsoft Sans Serif", 10);
-            player.settings.volume = 60;
+            player.settings.volume = 40;
             lblVolumeDisplay.Text = "Volume : " + player.settings.volume.ToString();
+            //timeToDisplay.Start();
         }
 
         // Method that controls the Next and Previous button
@@ -349,26 +353,89 @@ namespace Music_Player
 
         private void btnIncrease_Click(object sender, EventArgs e)
         {
-            player.settings.volume += 1;
+            player.settings.volume += numberForVolume;
             lblVolumeDisplay.Text = "Volume : " + player.settings.volume.ToString();
         }
 
         private void btnDecrease_Click(object sender, EventArgs e)
         {
-            player.settings.volume -= 1;
+            player.settings.volume -= numberForVolume;
             lblVolumeDisplay.Text = "Volume : " + player.settings.volume.ToString();
         }
 
         private void btnMute_Click(object sender, EventArgs e)
         {
-
-            player.settings.mute = player.settings.mute;
+            Button Mute = (Button)sender;
+           
+            if (player.settings.mute == true)
+            {
+                player.settings.mute = Mute.Enabled = false;
+            }
+            else
+            {
+                player.settings.mute = Mute.Enabled = true;
+            }
+            btnMute.Enabled = true;
         }
 
         private void deletePlaylistToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int value = 3;
             CreateMenuFileSave(value);
+        }
+
+        private void btnLoopSongs_Click(object sender, EventArgs e)
+        {
+            btnLoopSongs.TextAlign = ContentAlignment.MiddleLeft;
+            loopSong += 1;
+            if (loopSong == 1)
+            {
+                player.settings.setMode("loop", true);
+                btnLoopSongs.Text = "Looping Song";
+            }
+            //else if (loopSong == 2)
+            //{
+                
+            //}
+            else
+            {
+                loopSong = 0;
+            }
+            
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            //timeToDisplay.Interval = (int)player.currentMedia.duration * 10000;
+            //timeToDisplay.Tick += new System.EventHandler(this.timer1_Tick);
+            //lblsongDuration.Text = player.currentMedia.durationString;
+            //timeToDisplay.Start();
+            percent = player.currentMedia.duration;
+            TimeSpan songSeconds = new TimeSpan();            
+
+            while(songSeconds != TimeSpan.FromSeconds(percent))
+            {
+                double now = player.controls.currentPosition;
+                songSeconds = TimeSpan.FromSeconds(now);
+                lblsongDuration.Text = songSeconds.ToString(@"mm\:ss");
+            }
+            timeToDisplay.Stop();
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Settings set = new Settings();
+            set.DataAvailable += new EventHandler(chileDataAvailable);
+            set.ShowDialog();
+        }
+
+        void chileDataAvailable(object sender, EventArgs e)
+        {
+            Settings set = sender as Settings;
+            if (set != null)
+            {
+                numberForVolume = set.number;
+            }
         }
     }
 }

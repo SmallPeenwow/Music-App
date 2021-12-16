@@ -29,6 +29,7 @@ namespace Music_Player
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.playBtn = new System.Windows.Forms.Button();
             this.stopBtn = new System.Windows.Forms.Button();
             this.pause = new System.Windows.Forms.Button();
@@ -53,6 +54,9 @@ namespace Music_Player
             this.btnDecrease = new System.Windows.Forms.Button();
             this.lblVolumeDisplay = new System.Windows.Forms.Label();
             this.btnMute = new System.Windows.Forms.Button();
+            this.btnLoopSongs = new System.Windows.Forms.Button();
+            this.timeToDisplay = new System.Windows.Forms.Timer(this.components);
+            this.lblsongDuration = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -233,8 +237,9 @@ namespace Music_Player
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // musicIndex
             // 
@@ -255,7 +260,7 @@ namespace Music_Player
             // 
             // btnIncrease
             // 
-            this.btnIncrease.Location = new System.Drawing.Point(15, 285);
+            this.btnIncrease.Location = new System.Drawing.Point(179, 136);
             this.btnIncrease.Name = "btnIncrease";
             this.btnIncrease.Size = new System.Drawing.Size(100, 23);
             this.btnIncrease.TabIndex = 8;
@@ -268,7 +273,7 @@ namespace Music_Player
             // 
             // btnDecrease
             // 
-            this.btnDecrease.Location = new System.Drawing.Point(15, 310);
+            this.btnDecrease.Location = new System.Drawing.Point(179, 158);
             this.btnDecrease.Name = "btnDecrease";
             this.btnDecrease.Size = new System.Drawing.Size(100, 23);
             this.btnDecrease.TabIndex = 9;
@@ -282,7 +287,7 @@ namespace Music_Player
             // lblVolumeDisplay
             // 
             this.lblVolumeDisplay.AutoSize = true;
-            this.lblVolumeDisplay.Location = new System.Drawing.Point(70, 336);
+            this.lblVolumeDisplay.Location = new System.Drawing.Point(234, 184);
             this.lblVolumeDisplay.Name = "lblVolumeDisplay";
             this.lblVolumeDisplay.Size = new System.Drawing.Size(48, 13);
             this.lblVolumeDisplay.TabIndex = 14;
@@ -301,11 +306,38 @@ namespace Music_Player
             this.btnMute.MouseEnter += new System.EventHandler(this.CursorChange);
             this.btnMute.MouseLeave += new System.EventHandler(this.CursorBack);
             // 
+            // btnLoopSongs
+            // 
+            this.btnLoopSongs.Location = new System.Drawing.Point(15, 290);
+            this.btnLoopSongs.Name = "btnLoopSongs";
+            this.btnLoopSongs.Size = new System.Drawing.Size(100, 23);
+            this.btnLoopSongs.TabIndex = 15;
+            this.btnLoopSongs.Text = "Loop";
+            this.btnLoopSongs.UseVisualStyleBackColor = true;
+            this.btnLoopSongs.Click += new System.EventHandler(this.btnLoopSongs_Click);
+            this.btnLoopSongs.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
+            this.btnLoopSongs.MouseEnter += new System.EventHandler(this.CursorChange);
+            this.btnLoopSongs.MouseLeave += new System.EventHandler(this.CursorBack);
+            // 
+            // timeToDisplay
+            // 
+            this.timeToDisplay.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // lblsongDuration
+            // 
+            this.lblsongDuration.AutoSize = true;
+            this.lblsongDuration.Location = new System.Drawing.Point(12, 67);
+            this.lblsongDuration.Name = "lblsongDuration";
+            this.lblsongDuration.Size = new System.Drawing.Size(0, 13);
+            this.lblsongDuration.TabIndex = 16;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(677, 387);
+            this.Controls.Add(this.lblsongDuration);
+            this.Controls.Add(this.btnLoopSongs);
             this.Controls.Add(this.btnMute);
             this.Controls.Add(this.lblVolumeDisplay);
             this.Controls.Add(this.btnDecrease);
@@ -364,6 +396,9 @@ namespace Music_Player
         private System.Windows.Forms.Label lblVolumeDisplay;
         private System.Windows.Forms.Button btnMute;
         private System.Windows.Forms.ToolStripMenuItem deletePlaylistToolStripMenuItem;
+        private System.Windows.Forms.Button btnLoopSongs;
+        private System.Windows.Forms.Timer timeToDisplay;
+        private System.Windows.Forms.Label lblsongDuration;
     }
 }
 
