@@ -79,10 +79,9 @@ namespace Music_Player
             musicIndex.Text = music;
             currentSonglbl.Text = music;
             currentSonglbl.Font = new Font("Microsoft Sans Serif", 10);
-            player.settings.volume = 40;
             lblVolumeDisplay.Text = "Volume : " + player.settings.volume.ToString();
 
-            timer.Interval = 400;
+            timer.Interval = 200;
             timer.Tick += new EventHandler(timer1_Tick);
             timer.Start();
         }
@@ -168,7 +167,7 @@ namespace Music_Player
             musicValue.Clear();
             musicListBox.Items.Clear();
             ListSelecter.Items.Add("All");
-
+            
             string[] folderName = Directory.GetDirectories(@"C:\Music App\Music Playlists", "*", SearchOption.AllDirectories);
 
             string[] files;
@@ -450,11 +449,19 @@ namespace Music_Player
             TimeSpan secondSubtract = TimeSpan.FromSeconds(1);
             lblsongDuration.Font = new Font("Microsoft Sans Serif", 10);
             double now = player.controls.currentPosition;
-            //int thisTime = (int)Math.Round(nowtime);
-            songSeconds = TimeSpan.FromSeconds(now);
-            //songSeconds = TimeSpan.FromSeconds(thisTime);
-            //TimeSpan currentSeconds = songSeconds.Subtract(secondSubtract);
-            lblsongDuration.Text = songSeconds.ToString(@"mm\:ss");          
+            nowtime = player.currentMedia.duration;
+            int thisTime = (int)Math.Floor(nowtime);
+            int thisNow = (int)Math.Ceiling(now);
+            secondSubtract = TimeSpan.FromSeconds(thisNow);
+            songSeconds = TimeSpan.FromSeconds(thisTime);
+            TimeSpan currentSeconds = songSeconds.Subtract(secondSubtract);
+            lblsongDuration.Text = currentSeconds.ToString(@"mm\:ss");
+
+            if(thisTime == thisNow)
+            {
+                lblsongDuration.Text = "";
+                timer.Stop();
+            }
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)

@@ -30,6 +30,7 @@ namespace Music_Player
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.playBtn = new System.Windows.Forms.Button();
             this.stopBtn = new System.Windows.Forms.Button();
             this.pause = new System.Windows.Forms.Button();
@@ -355,6 +356,7 @@ namespace Music_Player
             this.Controls.Add(this.playBtn);
             this.Controls.Add(this.menuStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "Form1";
