@@ -85,7 +85,7 @@ namespace Music_Player
 
             if (value == 1)
             {
-                if (patternMatch.IsMatch(textBoxMatch) || string.IsNullOrWhiteSpace(txtPlaylist.Text) || Directory.Exists(txtPlaylist.Text)) // !(txtPlaylist.Text.Contains("Playlist")) Could do this
+                if (!(patternMatch.IsMatch(textBoxMatch)) || string.IsNullOrWhiteSpace(txtPlaylist.Text) || Directory.Exists(txtPlaylist.Text)) // !(txtPlaylist.Text.Contains("Playlist")) Could do this
                 {
                     MessageBox.Show("Make sure you have entered in a valid Playlist name longer than 3 characters.\n\nPlaylist could already Exist.", "Not Correct", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
