@@ -25,6 +25,10 @@ namespace Music_Player
 
         int numberForVolume = 1; // Used to increment and decrement   
 
+        double nowtime = 0; // Used to display time of song
+
+        private int btnLoopClicked = 1;
+
         IDictionary<string, string> musicValue = new Dictionary<string, string>();
 
         public Form1()
@@ -66,7 +70,7 @@ namespace Music_Player
 
         public void playMusic(string music, string playlist)
         {
-            string willPlay = "C:\\Music App\\Music Playlists\\" + playlist + " Playlist\\" + music + ".mp3";
+            string willPlay = "C:\\Music App\\Music Player\\Music Playlists\\" + playlist + " Playlist\\" + music + ".mp3";
 
             player.URL = willPlay;
 
@@ -165,7 +169,7 @@ namespace Music_Player
             musicListBox.Items.Clear();
             ListSelecter.Items.Add("All");
 
-            string[] folderName = Directory.GetDirectories(@"C:\Music App\Music Playlists", "*", SearchOption.AllDirectories);
+            string[] folderName = Directory.GetDirectories(@"C:\Music App\Music Player\Music Playlists", "*", SearchOption.AllDirectories);
 
             string[] files;
 
@@ -241,7 +245,7 @@ namespace Music_Player
                     string playlistSelected = ListSelecter.SelectedItem.ToString();
                     storeOfPlayListSelect.Text = playlistSelected;
 
-                    string[] files = Directory.GetFiles(@"C:\Music App\Music Playlists\" + playlistSelected + " Playlist");
+                    string[] files = Directory.GetFiles(@"C:\Music App\Music Player\Music Playlists\" + playlistSelected + " Playlist");
 
                     for (int i = 0; i < files.Length; i++)
                     {
@@ -389,17 +393,15 @@ namespace Music_Player
 
         private void btnMute_Click(object sender, EventArgs e)
         {
-            Button Mute = (Button)sender;
-
             if(player.playState == WMPPlayState.wmppsPlaying)
             {
                 if (player.settings.mute == true)
-                {
-                    player.settings.mute = Mute.Enabled = false;
+                {                   
+                    player.settings.mute = false;
                 }
                 else
                 {
-                    player.settings.mute = Mute.Enabled = true;
+                    player.settings.mute =  true;
                 }
             }
             else
@@ -419,25 +421,39 @@ namespace Music_Player
 
         private void btnLoopSongs_Click(object sender, EventArgs e)
         {
+            
             if(player.playState == WMPPlayState.wmppsPlaying || player.playState == WMPPlayState.wmppsPaused)
             {
-                player.settings.setMode("loop", true);
-                btnLoopSongs.Text = "Song on repeat";
+                if (btnLoopClicked == 1)
+                {
+                    player.settings.setMode("loop", true);
+                    btnLoopSongs.Text = "Song on repeat";
+                    btnLoopClicked = 2;
+                }
+                else
+                {
+                    player.settings.setMode("loop", false);
+                    btnLoopSongs.Text = "Loop";
+                    btnLoopClicked = 1;
+                }
             }
             else
             {
-                btnLoopSongs.Text = "Loop";
                 NoMusicPlaying();
-            }
-                   
+                btnLoopClicked = 1;
+            }                                               
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             TimeSpan songSeconds = new TimeSpan();
+            TimeSpan secondSubtract = TimeSpan.FromSeconds(1);
             lblsongDuration.Font = new Font("Microsoft Sans Serif", 10);
             double now = player.controls.currentPosition;
+            //int thisTime = (int)Math.Round(nowtime);
             songSeconds = TimeSpan.FromSeconds(now);
+            //songSeconds = TimeSpan.FromSeconds(thisTime);
+            //TimeSpan currentSeconds = songSeconds.Subtract(secondSubtract);
             lblsongDuration.Text = songSeconds.ToString(@"mm\:ss");          
         }
 

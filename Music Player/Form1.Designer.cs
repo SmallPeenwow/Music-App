@@ -315,7 +315,6 @@ namespace Music_Player
             this.btnLoopSongs.Text = "Loop";
             this.btnLoopSongs.UseVisualStyleBackColor = true;
             this.btnLoopSongs.Click += new System.EventHandler(this.btnLoopSongs_Click);
-            this.btnLoopSongs.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
             this.btnLoopSongs.MouseEnter += new System.EventHandler(this.CursorChange);
             this.btnLoopSongs.MouseLeave += new System.EventHandler(this.CursorBack);
             // 

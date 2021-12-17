@@ -62,7 +62,7 @@ namespace Music_Player
 
                 string[] fileSplits;
 
-                string[] folderName = Directory.GetDirectories(@"C:\Music App\Music Playlists", "*", SearchOption.AllDirectories);
+                string[] folderName = Directory.GetDirectories(@"C:\Music App\Music Player\Music Playlists", "*", SearchOption.AllDirectories);
 
                 for (int i = 0; i < folderName.Length; i++)
                 {
@@ -91,7 +91,7 @@ namespace Music_Player
                 }
                 else
                 {
-                    string newPath = @"C:\Music App\Music Playlists\" + txtPlaylist.Text + " Playlist";
+                    string newPath = @"C:\Music App\Music Player\Music Playlists\" + txtPlaylist.Text + " Playlist";
 
                     Directory.CreateDirectory(newPath);
 
@@ -103,7 +103,7 @@ namespace Music_Player
             {
                 try
                 {
-                    string deletePath = @"C:\Music App\Music Playlists\" + cmbSelectPlaylist.Text;
+                    string deletePath = @"C:\Music App\Music Player\Music Playlists\" + cmbSelectPlaylist.Text;
 
                     Directory.Delete(deletePath, true);
                     MessageBox.Show("Playlist was Deleted", "Success", MessageBoxButtons.OK);
@@ -154,7 +154,7 @@ namespace Music_Player
                     {
                         fileContent = openFile.FileName;
 
-                        string newFileLocation = @"C:\Music App\Music Playlists\" + cmbSelectPlaylist.SelectedItem.ToString() + "\\" + fileSong;
+                        string newFileLocation = @"C:\Music App\Music Player\Music Playlists\" + cmbSelectPlaylist.SelectedItem.ToString() + "\\" + fileSong;
 
                         File.Move(fileContent, newFileLocation);
                         MessageBox.Show("Song was added successfully", "Success", MessageBoxButtons.OK);
