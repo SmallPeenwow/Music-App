@@ -149,10 +149,11 @@ namespace Music_Player
                     {
                         fileContent = openFile.FileName;
 
-                        string newFileLocation = @"C:\Music App\Music Playlists\" + cmbSelectPlaylist.SelectedItem.ToString() + " Playlist\\" + fileSong;
+                        string newFileLocation = @"C:\Music App\Music Playlists\" + cmbSelectPlaylist.SelectedItem.ToString() + "\\" + fileSong;
 
                         File.Move(fileContent, newFileLocation);
                         MessageBox.Show("Song was added successfully", "Success", MessageBoxButtons.OK);
+                        this.Close();
                     }
                     else
                     {
