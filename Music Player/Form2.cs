@@ -5,9 +5,9 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Music_Player
 {
@@ -77,12 +77,17 @@ namespace Music_Player
         }
 
         private void btnConfirm_Click(object sender, EventArgs e)
-        {          
-            if(value == 1)
+        {
+            string pattern = @"[A-Za-z0-9_\s][^\d]";            
+            string textBoxMatch = Convert.ToString(txtPlaylist);
+
+            Regex patternMatch = new Regex(pattern);
+
+            if (value == 1)
             {
-                if (string.IsNullOrWhiteSpace(txtPlaylist.Text) || Directory.Exists(txtPlaylist.Text)) // !(txtPlaylist.Text.Contains("Playlist")) Could do this
+                if (patternMatch.IsMatch(textBoxMatch) || string.IsNullOrWhiteSpace(txtPlaylist.Text) || Directory.Exists(txtPlaylist.Text)) // !(txtPlaylist.Text.Contains("Playlist")) Could do this
                 {
-                    MessageBox.Show("Make sure you have entered in a valid Playlist name longer than 3 characters\n\nPlaylist could already Exist", "Not Correct", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Make sure you have entered in a valid Playlist name longer than 3 characters.\n\nPlaylist could already Exist.", "Not Correct", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {

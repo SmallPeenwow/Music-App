@@ -120,12 +120,19 @@ namespace Music_Player
 
         private void stopBtn_Click(object sender, EventArgs e)
         {
-            player.controls.stop();
-            currentSonglbl.Text = "";
-            lblVolumeDisplay.Text = "Volume :";
+            if(player.playState == WMPPlayState.wmppsPlaying || player.playState == WMPPlayState.wmppsPaused)
+            {
+                player.controls.stop();
+                currentSonglbl.Text = "";
+                lblVolumeDisplay.Text = "Volume :";
 
-            lblsongDuration.Text = "";
-            timer.Stop();
+                lblsongDuration.Text = "";
+                timer.Stop();
+            }
+            else 
+            {
+                NoMusicPlaying();
+            }          
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -192,10 +199,18 @@ namespace Music_Player
 
         private void pause_Click(object sender, EventArgs e)
         {
-            time = player.controls.currentPosition;
-            player.controls.pause();
+            if(player.playState == WMPPlayState.wmppsPlaying)
+            {
+                time = player.controls.currentPosition;
+                player.controls.pause();
 
-            timer.Stop();
+                timer.Stop();
+            }
+            else
+            {
+                NoMusicPlaying();
+            }
+            
         }
 
         private void CursorChange(object sender, EventArgs e)
@@ -375,15 +390,24 @@ namespace Music_Player
         private void btnMute_Click(object sender, EventArgs e)
         {
             Button Mute = (Button)sender;
-           
-            if (player.settings.mute == true)
+
+            if(player.playState == WMPPlayState.wmppsPlaying)
             {
-                player.settings.mute = Mute.Enabled = false;
+                if (player.settings.mute == true)
+                {
+                    player.settings.mute = Mute.Enabled = false;
+                }
+                else
+                {
+                    player.settings.mute = Mute.Enabled = true;
+                }
             }
             else
             {
-                player.settings.mute = Mute.Enabled = true;
+                NoMusicPlaying();
             }
+           
+            
             btnMute.Enabled = true;
         }
 
@@ -395,8 +419,17 @@ namespace Music_Player
 
         private void btnLoopSongs_Click(object sender, EventArgs e)
         {
-            player.settings.setMode("loop", true);
-            btnLoopSongs.Text = "Looping Song";       
+            if(player.playState == WMPPlayState.wmppsPlaying || player.playState == WMPPlayState.wmppsPaused)
+            {
+                player.settings.setMode("loop", true);
+                btnLoopSongs.Text = "Song on repeat";
+            }
+            else
+            {
+                btnLoopSongs.Text = "Loop";
+                NoMusicPlaying();
+            }
+                   
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -413,6 +446,11 @@ namespace Music_Player
             Settings set = new Settings();
             set.DataAvailable += new EventHandler(chileDataAvailable);
             set.ShowDialog();
+        }
+
+        private void NoMusicPlaying()
+        {
+            MessageBox.Show("No song has been selected to play", "No music playing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         void chileDataAvailable(object sender, EventArgs e)
