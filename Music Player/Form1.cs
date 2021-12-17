@@ -70,7 +70,7 @@ namespace Music_Player
 
         public void playMusic(string music, string playlist)
         {
-            string willPlay = "C:\\Music App\\Music Player\\Music Playlists\\" + playlist + " Playlist\\" + music + ".mp3";
+            string willPlay = "C:\\Music App\\Music Playlists\\" + playlist + " Playlist\\" + music + ".mp3";
 
             player.URL = willPlay;
 
@@ -169,7 +169,7 @@ namespace Music_Player
             musicListBox.Items.Clear();
             ListSelecter.Items.Add("All");
 
-            string[] folderName = Directory.GetDirectories(@"C:\Music App\Music Player\Music Playlists", "*", SearchOption.AllDirectories);
+            string[] folderName = Directory.GetDirectories(@"C:\Music App\Music Playlists", "*", SearchOption.AllDirectories);
 
             string[] files;
 
@@ -245,7 +245,7 @@ namespace Music_Player
                     string playlistSelected = ListSelecter.SelectedItem.ToString();
                     storeOfPlayListSelect.Text = playlistSelected;
 
-                    string[] files = Directory.GetFiles(@"C:\Music App\Music Player\Music Playlists\" + playlistSelected + " Playlist");
+                    string[] files = Directory.GetFiles(@"C:\Music App\Music Playlists\" + playlistSelected + " Playlist");
 
                     for (int i = 0; i < files.Length; i++)
                     {
