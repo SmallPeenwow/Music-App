@@ -132,6 +132,8 @@ namespace Music_Player
                 player.controls.stop();
                 currentSonglbl.Text = "";
                 lblVolumeDisplay.Text = "Volume :";
+                storeOfPlayListSelect.Clear();
+                musicIndex.Clear();
 
                 lblsongDuration.Text = "";
                 timer.Stop();
@@ -172,41 +174,36 @@ namespace Music_Player
             musicValue.Clear();
             musicListBox.Items.Clear();
             ListSelecter.Items.Add("All");
-            //string pathThing = "Music Playlists";
+           
             string pathSearch = Directory.GetCurrentDirectory();
-            //string pathfull = Path.GetFullPath(pathThing);
+            
             connection = new Connection(pathSearch);
             currentDir = connection.fullPathName();
 
-            //string[] folderName = Directory.GetDirectories(@"C:\Music App\Music Playlists", "*", SearchOption.AllDirectories);
             string[] folderName = Directory.GetDirectories(currentDir, "*", SearchOption.AllDirectories);
             string[] files;
 
             for (int i = 0; i < folderName.Length; i++)
             {
-                //if (folderName[i].Contains("Playlist"))
-               // {
-                    fileSplits = folderName[i].Split('\\', ':');
+                fileSplits = folderName[i].Split('\\', ':');
 
-                    //ListSelecter.Items.Add(fileSplits[fileSplits.Length - 1].Replace("Playlist", "").Trim(' '));
-                    ListSelecter.Items.Add(fileSplits[fileSplits.Length - 1]);
-                    files = Directory.GetFiles(folderName[i]);
+                ListSelecter.Items.Add(fileSplits[fileSplits.Length - 1]);
+                files = Directory.GetFiles(folderName[i]);
 
-                    for (int j = 0; j < files.Length; j++)
+                for (int j = 0; j < files.Length; j++)
+                {
+                    if (files[j].Contains("mp3"))
                     {
-                        if (files[j].Contains("mp3"))
-                        {
-                            string[] splitFiles = files[j].Split('\\', ':');
+                        string[] splitFiles = files[j].Split('\\', ':');
 
-                            string song = splitFiles[splitFiles.Length - 1].Replace(".mp3", "");
-                            string playlist = splitFiles[splitFiles.Length - 2].Replace(".mp3", "");
+                        string song = splitFiles[splitFiles.Length - 1].Replace(".mp3", "");
+                        string playlist = splitFiles[splitFiles.Length - 2].Replace(".mp3", "");
 
-                            musicListBox.Items.Add(song);
+                        musicListBox.Items.Add(song);
 
-                            musicValue.Add(song, playlist);
-                        }
+                        musicValue.Add(song, playlist);
                     }
-               // }
+                }
             }
         }
 
@@ -242,7 +239,6 @@ namespace Music_Player
             {
                 if (ListSelecter.SelectedItem.Equals("All"))
                 {
-                    //ListSelecter.Items.Clear();
                     storeOfPlayListSelect.Text = "All";
                     loadPlaylistSongs();
                 }
@@ -253,8 +249,7 @@ namespace Music_Player
 
                     string playlistSelected = ListSelecter.SelectedItem.ToString();
                     storeOfPlayListSelect.Text = playlistSelected;
-
-                    //string[] files = Directory.GetFiles(@"C:\Music App\Music Playlists\" + playlistSelected + " Playlist");
+                  
                     string[] files = Directory.GetFiles(currentDir + playlistSelected);
                     for (int i = 0; i < files.Length; i++)
                     {
@@ -286,9 +281,6 @@ namespace Music_Player
 
             value = musicValue[value].ToString();
 
-            //string[] resultSplit = value.Split(' ');
-            //value = resultSplit[0];
-
             return value;
         }
 
@@ -301,9 +293,6 @@ namespace Music_Player
             num = num > musicValue.Count - 1 ? num = 0 : num < 0 ? num = Array.IndexOf(musicValue.Keys.ToArray(), musicValue.Keys.Last()) : num;
 
             value = musicValue.ElementAt(num).Value;
-
-            //string[] resultSplit = value.Split(' ');
-            //value = resultSplit[0];
 
             storeOfPlayListSelect.Text = value;
             

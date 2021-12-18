@@ -17,8 +17,6 @@ namespace Music_Player
 
         public string dirCurrent;
 
-        //private Connection connection;
-
         public Form2(int value, string connectDir)
         {
             InitializeComponent();
@@ -68,7 +66,6 @@ namespace Music_Player
 
                 string[] fileSplits;
 
-                //string[] folderName = Directory.GetDirectories(@"C:\Music App\Music Playlists", "*", SearchOption.AllDirectories);
                 string[] folderName = Directory.GetDirectories(dirCurrent, "*", SearchOption.AllDirectories);
 
                 for (int i = 0; i < folderName.Length; i++)
@@ -98,7 +95,6 @@ namespace Music_Player
                 }
                 else
                 {
-                    //string newPath = @"C:\Music App\Music Playlists\" + txtPlaylist.Text + " Playlist";
                     string newPath = dirCurrent + txtPlaylist.Text;
                     Directory.CreateDirectory(newPath);
 
