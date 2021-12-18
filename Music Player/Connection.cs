@@ -3,38 +3,73 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using System.Collections;
 
 namespace Music_Player
 {
     class Connection
     {
-        private string dirConnection;
+        private List<string> fileConnection = new List<string>();
 
-        public string DirConnection
+        public List<string> FileConnection
         {
             get
             {
-                return dirConnection;
+                return fileConnection;
             }
             set
             {
-                dirConnection = value;
+                fileConnection = value;
             }
         }
 
-        public Connection(string dirCon)
+        // This will get textfile with songs and playlists
+        // then will read the contents of the file
+        public Connection(string directoryPath)
         {
-            string end2 = "Music Player";
-            int indexOne = dirCon.IndexOf(end2);
+            string cutEndpath = "bin";
+            int indexOfBinPath = directoryPath.IndexOf(cutEndpath);
 
-            string driConTwo = dirCon.Substring(0, indexOne);
-            dirCon = driConTwo + "Music Playlists\\";
-            dirConnection = dirCon;
+            string pathFiletext = directoryPath.Substring(0, indexOfBinPath);
+            string[] getfile = Directory.GetFiles(pathFiletext, "PlaylistAndSong*", SearchOption.AllDirectories);
+
+            StreamReader readTextFile = new StreamReader(getfile[0]);
+
+            string textFileLine;
+            
+            //if (textFileLine != null)
+            //{
+            while (!(readTextFile.EndOfStream))
+            {
+                if (readTextFile != null)
+                {
+                    textFileLine = readTextFile.ReadLine();
+                    fileConnection.Add(textFileLine);
+                }
+                else
+                {
+                    textFileLine = "No music in file";
+                    fileConnection.Add(textFileLine);
+                }
+            }
+            //}
+            //else
+            //{
+                
+            //}
+
+            //string end2 = "Music Player";
+            //int indexOne = dirCon.IndexOf(end2);
+
+            //string driConTwo = dirCon.Substring(0, indexOne);
+            //dirCon = driConTwo + "Music Playlists\\";
+            //dirConnection = dirCon;
         }
 
-        public string fullPathName()
+        public List<string> fullPathName()
         {
-            string paths = dirConnection;
+            List<string> paths = fileConnection;
             return paths;
         }
     }

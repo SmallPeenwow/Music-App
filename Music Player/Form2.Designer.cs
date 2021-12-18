@@ -43,7 +43,7 @@ namespace Music_Player
             // 
             this.txtPlaylist.Location = new System.Drawing.Point(12, 27);
             this.txtPlaylist.Name = "txtPlaylist";
-            this.txtPlaylist.Size = new System.Drawing.Size(245, 20);
+            this.txtPlaylist.Size = new System.Drawing.Size(147, 20);
             this.txtPlaylist.TabIndex = 0;
             this.txtPlaylist.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtPlaylist_KeyUp);
             // 
@@ -59,7 +59,7 @@ namespace Music_Player
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(157, 83);
+            this.btnCancel.Location = new System.Drawing.Point(161, 83);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(100, 29);
             this.btnCancel.TabIndex = 2;
@@ -78,7 +78,7 @@ namespace Music_Player
             // 
             // btnUpload
             // 
-            this.btnUpload.Location = new System.Drawing.Point(11, 24);
+            this.btnUpload.Location = new System.Drawing.Point(11, 27);
             this.btnUpload.Name = "btnUpload";
             this.btnUpload.Size = new System.Drawing.Size(99, 23);
             this.btnUpload.TabIndex = 5;
@@ -98,9 +98,9 @@ namespace Music_Player
             // cmbSelectPlaylist
             // 
             this.cmbSelectPlaylist.FormattingEnabled = true;
-            this.cmbSelectPlaylist.Location = new System.Drawing.Point(12, 54);
+            this.cmbSelectPlaylist.Location = new System.Drawing.Point(12, 56);
             this.cmbSelectPlaylist.Name = "cmbSelectPlaylist";
-            this.cmbSelectPlaylist.Size = new System.Drawing.Size(245, 21);
+            this.cmbSelectPlaylist.Size = new System.Drawing.Size(148, 21);
             this.cmbSelectPlaylist.TabIndex = 7;
             this.cmbSelectPlaylist.SelectedIndexChanged += new System.EventHandler(this.cmbSelectPlaylist_SelectedIndexChanged);
             // 

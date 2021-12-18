@@ -13,11 +13,13 @@ namespace Music_Player
 {
     public partial class Form2 : Form
     {
-        private int value;
+        private int value; // Used to display if Create or Delete or Add muisc controls will be displayed and used
 
-        public string dirCurrent;
+        List<string> dirCurrent = new List<string>(); 
 
-        public Form2(int value, string connectDir)
+        string musicFileName;
+
+        public Form2(int value, List<string> connectDir)
         {
             InitializeComponent();
             
@@ -42,7 +44,7 @@ namespace Music_Player
                 btnUpload.Enabled = false;
                 btnUpload.Visible = false;
                 btnUpload.TabStop = false;
-                lblTellLength.Text = "Your Playlist needs to have more the 4 characters";
+                lblTellLength.Text = "Your Playlist needs to have more than 4 characters";
                 lblShowDo.Visible = false;
                 cmbSelectPlaylist.Enabled = false;
                 cmbSelectPlaylist.Visible = false;
@@ -55,7 +57,7 @@ namespace Music_Player
                 txtPlaylist.TabStop = false;
                 btnUpload.TabIndex = 0;
                 lblTellLength.Visible = false;
-                btnUpload.Enabled = false;              
+                //btnUpload.Enabled = false;              
                 cmbSelectPlaylist.TabIndex = 1;
                 cmbSelectPlaylist.DropDownStyle = ComboBoxStyle.DropDownList;
                 btnConfirm.TabIndex = 2;
@@ -65,18 +67,18 @@ namespace Music_Player
                 lblShowDo.Text = value == 3 ? lblShowDo.Text = "" : lblShowDo.Text = "Select a Playlist first!";
 
                 string[] fileSplits;
+                
+                //string[] folderName = Directory.GetDirectories(dirCurrent, "*", SearchOption.AllDirectories);
+                     
+                //for (int i = 0; i < folderName.Length; i++)
+                //{
+                //    if (folderName[i].Contains("Playlist"))
+                //    {
+                //        fileSplits = folderName[i].Split('\\', ':');
 
-                string[] folderName = Directory.GetDirectories(dirCurrent, "*", SearchOption.AllDirectories);
-
-                for (int i = 0; i < folderName.Length; i++)
-                {
-                    if (folderName[i].Contains("Playlist"))
-                    {
-                        fileSplits = folderName[i].Split('\\', ':');
-
-                        cmbSelectPlaylist.Items.Add(fileSplits[fileSplits.Length - 1]);
-                    }
-                }
+                //        cmbSelectPlaylist.Items.Add(fileSplits[fileSplits.Length - 1]);
+                //    }
+                //}                            
             }
         }
 
@@ -91,7 +93,7 @@ namespace Music_Player
             {
                 if (!(patternMatch.IsMatch(textBoxMatch)) || string.IsNullOrWhiteSpace(txtPlaylist.Text) || Directory.Exists(txtPlaylist.Text))
                 {
-                    MessageBox.Show("Make sure you have entered in a valid Playlist name longer than 3 characters.\n\nPlaylist could already Exist.", "Not Correct", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Make sure you have entered in a valid Playlist name longer than 4 characters.\n\nPlaylist could already Exist.", "Not Correct", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
@@ -101,6 +103,12 @@ namespace Music_Player
                     MessageBox.Show("Playlist was Created", "Success", MessageBoxButtons.OK);
                     this.Close();
                 }              
+            }
+            else if (value == 2)
+            {
+                //File.Move(fileContent, newFileLocation);
+                MessageBox.Show("Song was added successfully", "Success", MessageBoxButtons.OK);
+                this.Close();
             }
             else
             {
@@ -142,11 +150,11 @@ namespace Music_Player
             }
         }
 
+        // Gets the songs file path and then stores it in a textfile
         private void btnUpload_Click(object sender, EventArgs e)
         {
             try
-            {
-                string fileContent;
+            {               
                 OpenFileDialog openFile = new OpenFileDialog();
 
                 string filePath = Environment.SpecialFolder.UserProfile + "\\Downloads";
@@ -160,13 +168,14 @@ namespace Music_Player
 
                     if (fileSong.Contains(".mp3"))
                     {
-                        fileContent = openFile.FileName;
+                        //fileContent = openFile.FileName;
+                        musicFileName = openFile.FileName;
 
                         string newFileLocation = dirCurrent + cmbSelectPlaylist.SelectedItem.ToString() + "\\" + fileSong;
 
-                        File.Move(fileContent, newFileLocation);
-                        MessageBox.Show("Song was added successfully", "Success", MessageBoxButtons.OK);
-                        this.Close();
+                        //File.Move(fileContent, newFileLocation);
+                        //MessageBox.Show("Song was added successfully", "Success", MessageBoxButtons.OK);
+                        //this.Close();
                     }
                     else
                     {
@@ -190,7 +199,7 @@ namespace Music_Player
             {
                 if (cmbSelectPlaylist.SelectedItem != null)
                 {
-                    btnUpload.Enabled = true;
+                    //btnUpload.Enabled = true;
                     lblShowDo.Visible = false;
                 }
             }            

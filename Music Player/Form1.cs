@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using WMPLib;
-using System.Collections;
 
 namespace Music_Player
 {
@@ -29,11 +28,12 @@ namespace Music_Player
 
         private int btnLoopClicked = 1;
 
-        public string currentDir;
+        List<string> currentFilePath = new List<string>();
 
         private Connection connection;
 
-        IDictionary<string, string> musicValue = new Dictionary<string, string>();
+        //IDictionary<string, string> musicValue = new Dictionary<string, string>();
+        IDictionary<string, Dictionary<string, string>> musicValue = new Dictionary<string, Dictionary<string, string>>();
 
         public Form1()
         {
@@ -74,9 +74,8 @@ namespace Music_Player
 
         public void playMusic(string music, string playlist)
         {
-            //string willPlay = "C:\\Music App\\Music Playlists\\" + playlist + " Playlist\\" + music + ".mp3";
-            string willPlay = currentDir + playlist + "\\" + music + ".mp3";
-            player.URL = willPlay;
+            //string willPlay = currentDir + playlist + "\\" + music + ".mp3";
+            //player.URL = willPlay;
 
             player.controls.play();
             
@@ -125,6 +124,7 @@ namespace Music_Player
             }
         }
 
+        // Will check if song is currently playing or if it is paused
         private void stopBtn_Click(object sender, EventArgs e)
         {
             if(player.playState == WMPPlayState.wmppsPlaying || player.playState == WMPPlayState.wmppsPaused)
@@ -134,6 +134,9 @@ namespace Music_Player
                 lblVolumeDisplay.Text = "Volume :";
                 storeOfPlayListSelect.Clear();
                 musicIndex.Clear();
+                player.settings.setMode("loop", false);
+                btnLoopSongs.Text = "Loop";
+                btnLoopClicked = 1;
 
                 lblsongDuration.Text = "";
                 timer.Stop();
@@ -176,34 +179,49 @@ namespace Music_Player
             ListSelecter.Items.Add("All");
            
             string pathSearch = Directory.GetCurrentDirectory();
-            
-            connection = new Connection(pathSearch);
-            currentDir = connection.fullPathName();
+            //string[] pathRoot = Directory.GetDirectories(pathSearch);
+            ////string pathSerach = Directory.
 
-            string[] folderName = Directory.GetDirectories(currentDir, "*", SearchOption.AllDirectories);
+            //string[] getfiles = Directory.GetFiles(pathSearch, "*PlaylistAndSong*", SearchOption.AllDirectories);
+            ////string[] getfiles2 = Directory.GetFiles(pathRoot, "PlaylistAndSong.txt*", SearchOption.AllDirectories);
+            //string[] getfiles3 = Directory.GetFiles(pathSearch, "*PlaylistAndSong", SearchOption.AllDirectories);
+            //string pathSerach = textFile;
+            connection = new Connection(pathSearch);
+            currentFilePath = connection.fullPathName();
+            
+            //string[] folderName = Directory.GetDirectories(currentDir, "*", SearchOption.AllDirectories);
             string[] files;
 
-            for (int i = 0; i < folderName.Length; i++)
+            for (int i = 0; i < currentFilePath.Count; i++)
             {
-                fileSplits = folderName[i].Split('\\', ':');
+                fileSplits = currentFilePath[i].Split('\\', ':');
 
                 ListSelecter.Items.Add(fileSplits[fileSplits.Length - 1]);
-                files = Directory.GetFiles(folderName[i]);
 
-                for (int j = 0; j < files.Length; j++)
-                {
-                    if (files[j].Contains("mp3"))
-                    {
-                        string[] splitFiles = files[j].Split('\\', ':');
+                string song = fileSplits[fileSplits.Length - 1].Replace(".mp3", "");
+                string playlist = fileSplits[fileSplits.Length - 2];
+                string urlPath = currentFilePath[i];
 
-                        string song = splitFiles[splitFiles.Length - 1].Replace(".mp3", "");
-                        string playlist = splitFiles[splitFiles.Length - 2].Replace(".mp3", "");
+                musicListBox.Items.Add(song);
 
-                        musicListBox.Items.Add(song);
+                musicValue.Add(urlPath, new Dictionary<string, string>());
+                musicValue[urlPath].Add(song, playlist);
+                //files = Directory.GetFiles(folderName[i]);
 
-                        musicValue.Add(song, playlist);
-                    }
-                }
+                //for (int j = 0; j < files.Length; j++)
+                //{
+                //    if (files[j].Contains("mp3"))
+                //    {
+                //        string[] splitFiles = files[j].Split('\\', ':');
+
+                //        string song = splitFiles[splitFiles.Length - 1].Replace(".mp3", "");
+                //        string playlist = splitFiles[splitFiles.Length - 2].Replace(".mp3", "");
+
+                //        musicListBox.Items.Add(song);
+
+                //        musicValue.Add(song, playlist);
+                //    }
+                //}
             }
         }
 
@@ -250,18 +268,18 @@ namespace Music_Player
                     string playlistSelected = ListSelecter.SelectedItem.ToString();
                     storeOfPlayListSelect.Text = playlistSelected;
                   
-                    string[] files = Directory.GetFiles(currentDir + playlistSelected);
-                    for (int i = 0; i < files.Length; i++)
-                    {
-                        if (files[i].Contains("mp3"))
-                        {
-                            fileSplits = files[i].Split('\\', ':');
+                    //string[] files = Directory.GetFiles(currentDir + playlistSelected);
+                    //for (int i = 0; i < files.Length; i++)
+                    //{
+                    //    if (files[i].Contains("mp3"))
+                    //    {
+                    //        fileSplits = files[i].Split('\\', ':');
 
-                            string song = fileSplits[fileSplits.Length - 1].Replace(".mp3", "");
-                            musicListBox.Items.Add(song);
-                            musicValue.Add(song, playlistSelected);
-                        }
-                    }
+                    //        string song = fileSplits[fileSplits.Length - 1].Replace(".mp3", "");
+                    //        musicListBox.Items.Add(song);
+                    //        //musicValue.Add(song, playlistSelected);
+                    //    }
+                    //}
                 }                
             }
             catch (Exception loadFail)
@@ -292,7 +310,7 @@ namespace Music_Player
 
             num = num > musicValue.Count - 1 ? num = 0 : num < 0 ? num = Array.IndexOf(musicValue.Keys.ToArray(), musicValue.Keys.Last()) : num;
 
-            value = musicValue.ElementAt(num).Value;
+            //value = musicValue.ElementAt(num).Value;
 
             storeOfPlayListSelect.Text = value;
             
@@ -356,11 +374,11 @@ namespace Music_Player
         private void createPlaylistToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int value = 1;
-            CreateMenuFileSave(value, currentDir);
+            CreateMenuFileSave(value, currentFilePath);
         }
 
         // This method is for creating files and for add songs
-        private void CreateMenuFileSave(int value, string connectDir)
+        private void CreateMenuFileSave(int value, List<string> connectDir)
         {
             Form2 createFolder = new Form2(value, connectDir);
             createFolder.ShowDialog();           
@@ -370,7 +388,7 @@ namespace Music_Player
         private void addMusicToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int value = 2;
-            CreateMenuFileSave(value, currentDir);// Used to get form to add song
+            CreateMenuFileSave(value, currentFilePath);// Used to get form to add song
         }
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
@@ -416,7 +434,7 @@ namespace Music_Player
         private void deletePlaylistToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int value = 3;
-            CreateMenuFileSave(value, currentDir);
+            CreateMenuFileSave(value, currentFilePath);
         }
 
         private void btnLoopSongs_Click(object sender, EventArgs e)
@@ -427,7 +445,7 @@ namespace Music_Player
                 if (btnLoopClicked == 1)
                 {
                     player.settings.setMode("loop", true);
-                    btnLoopSongs.Text = "Song on repeat";
+                    btnLoopSongs.Text = "Song on loop";
                     btnLoopClicked = 2;
                 }
                 else
