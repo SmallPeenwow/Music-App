@@ -110,11 +110,15 @@ namespace Music_Player
             {
                 try
                 {
-                    string deletePath = dirCurrent + cmbSelectPlaylist.Text;
+                    DialogResult yesNo = MessageBox.Show("Are you sure you want to delete this playlist", "Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if(DialogResult.Yes == yesNo)
+                    {
+                        string deletePath = dirCurrent + cmbSelectPlaylist.Text;
 
-                    Directory.Delete(deletePath, true);
-                    MessageBox.Show("Playlist was Deleted", "Success", MessageBoxButtons.OK);
-                    this.Close();
+                        Directory.Delete(deletePath, true);
+                        MessageBox.Show("Playlist was Deleted", "Success", MessageBoxButtons.OK);
+                        this.Close();
+                    }                
                 }
                 catch(Exception error)
                 {

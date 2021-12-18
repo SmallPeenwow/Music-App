@@ -165,9 +165,10 @@ namespace Music_Player
                 MessageBox.Show("Couldn't load music list" + fail, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-        private void loadPlaylistSongs()
+        //private
+        public void loadPlaylistSongs()
         {
+            ListSelecter.Items.Clear();
             musicValue.Clear();
             musicListBox.Items.Clear();
             ListSelecter.Items.Add("All");
@@ -241,7 +242,7 @@ namespace Music_Player
             {
                 if (ListSelecter.SelectedItem.Equals("All"))
                 {
-                    ListSelecter.Items.Clear();
+                    //ListSelecter.Items.Clear();
                     storeOfPlayListSelect.Text = "All";
                     loadPlaylistSongs();
                 }
@@ -373,7 +374,8 @@ namespace Music_Player
         private void CreateMenuFileSave(int value, string connectDir)
         {
             Form2 createFolder = new Form2(value, connectDir);
-            createFolder.ShowDialog();
+            createFolder.ShowDialog();           
+            loadPlaylistSongs();
         }
 
         private void addMusicToolStripMenuItem_Click(object sender, EventArgs e)
@@ -467,10 +469,11 @@ namespace Music_Player
             TimeSpan currentSeconds = songSeconds.Subtract(secondSubtract);
             lblsongDuration.Text = currentSeconds.ToString(@"mm\:ss");
 
-            if(thisTime == thisNow)
-            {    
-                lblsongDuration.Text = "";
+            if (thisNow > thisTime)
+            {
+                lblsongDuration.Text = currentSeconds.ToString(@"mm\:ss");
                 timer.Stop();
+                lblsongDuration.Text = "";
             }
         }
 
