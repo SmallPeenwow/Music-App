@@ -29,6 +29,10 @@ namespace Music_Player
 
         private int btnLoopClicked = 1;
 
+        public string currentDir;
+
+        private Connection connection;
+
         IDictionary<string, string> musicValue = new Dictionary<string, string>();
 
         public Form1()
@@ -70,8 +74,8 @@ namespace Music_Player
 
         public void playMusic(string music, string playlist)
         {
-            string willPlay = "C:\\Music App\\Music Playlists\\" + playlist + " Playlist\\" + music + ".mp3";
-
+            //string willPlay = "C:\\Music App\\Music Playlists\\" + playlist + " Playlist\\" + music + ".mp3";
+            string willPlay = currentDir + playlist + "\\" + music + ".mp3";
             player.URL = willPlay;
 
             player.controls.play();
@@ -167,19 +171,24 @@ namespace Music_Player
             musicValue.Clear();
             musicListBox.Items.Clear();
             ListSelecter.Items.Add("All");
-            
-            string[] folderName = Directory.GetDirectories(@"C:\Music App\Music Playlists", "*", SearchOption.AllDirectories);
+            //string pathThing = "Music Playlists";
+            string pathSearch = Directory.GetCurrentDirectory();
+            //string pathfull = Path.GetFullPath(pathThing);
+            connection = new Connection(pathSearch);
+            currentDir = connection.fullPathName();
 
+            //string[] folderName = Directory.GetDirectories(@"C:\Music App\Music Playlists", "*", SearchOption.AllDirectories);
+            string[] folderName = Directory.GetDirectories(currentDir, "*", SearchOption.AllDirectories);
             string[] files;
 
             for (int i = 0; i < folderName.Length; i++)
             {
-                if (folderName[i].Contains("Playlist"))
-                {
+                //if (folderName[i].Contains("Playlist"))
+               // {
                     fileSplits = folderName[i].Split('\\', ':');
 
-                    ListSelecter.Items.Add(fileSplits[fileSplits.Length - 1].Replace("Playlist", "").Trim(' '));
-
+                    //ListSelecter.Items.Add(fileSplits[fileSplits.Length - 1].Replace("Playlist", "").Trim(' '));
+                    ListSelecter.Items.Add(fileSplits[fileSplits.Length - 1]);
                     files = Directory.GetFiles(folderName[i]);
 
                     for (int j = 0; j < files.Length; j++)
@@ -193,10 +202,10 @@ namespace Music_Player
 
                             musicListBox.Items.Add(song);
 
-                            musicValue.Add(song, playlist);                         
+                            musicValue.Add(song, playlist);
                         }
                     }
-                }
+               // }
             }
         }
 
@@ -244,8 +253,8 @@ namespace Music_Player
                     string playlistSelected = ListSelecter.SelectedItem.ToString();
                     storeOfPlayListSelect.Text = playlistSelected;
 
-                    string[] files = Directory.GetFiles(@"C:\Music App\Music Playlists\" + playlistSelected + " Playlist");
-
+                    //string[] files = Directory.GetFiles(@"C:\Music App\Music Playlists\" + playlistSelected + " Playlist");
+                    string[] files = Directory.GetFiles(currentDir + playlistSelected);
                     for (int i = 0; i < files.Length; i++)
                     {
                         if (files[i].Contains("mp3"))
@@ -276,8 +285,8 @@ namespace Music_Player
 
             value = musicValue[value].ToString();
 
-            string[] resultSplit = value.Split(' ');
-            value = resultSplit[0];
+            //string[] resultSplit = value.Split(' ');
+            //value = resultSplit[0];
 
             return value;
         }
@@ -292,8 +301,8 @@ namespace Music_Player
 
             value = musicValue.ElementAt(num).Value;
 
-            string[] resultSplit = value.Split(' ');
-            value = resultSplit[0];
+            //string[] resultSplit = value.Split(' ');
+            //value = resultSplit[0];
 
             storeOfPlayListSelect.Text = value;
             
@@ -357,20 +366,20 @@ namespace Music_Player
         private void createPlaylistToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int value = 1;
-            CreateMenuFileSave(value);
+            CreateMenuFileSave(value, currentDir);
         }
 
         // This method is for creating files and for add songs
-        private void CreateMenuFileSave(int value)
+        private void CreateMenuFileSave(int value, string connectDir)
         {
-            Form2 createFolder = new Form2(value);
+            Form2 createFolder = new Form2(value, connectDir);
             createFolder.ShowDialog();
         }
 
         private void addMusicToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int value = 2;
-            CreateMenuFileSave(value);// Used to get form to add song
+            CreateMenuFileSave(value, currentDir);// Used to get form to add song
         }
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
@@ -412,10 +421,11 @@ namespace Music_Player
             btnMute.Enabled = true;
         }
 
+        // Takes to Form to Delete Playlist and songs inside it
         private void deletePlaylistToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int value = 3;
-            CreateMenuFileSave(value);
+            CreateMenuFileSave(value, currentDir);
         }
 
         private void btnLoopSongs_Click(object sender, EventArgs e)
@@ -446,7 +456,7 @@ namespace Music_Player
         private void timer1_Tick(object sender, EventArgs e)
         {
             TimeSpan songSeconds = new TimeSpan();
-            TimeSpan secondSubtract = TimeSpan.FromSeconds(1);
+            TimeSpan secondSubtract = new TimeSpan();
             lblsongDuration.Font = new Font("Microsoft Sans Serif", 10);
             double now = player.controls.currentPosition;
             nowtime = player.currentMedia.duration;
@@ -458,7 +468,7 @@ namespace Music_Player
             lblsongDuration.Text = currentSeconds.ToString(@"mm\:ss");
 
             if(thisTime == thisNow)
-            {
+            {    
                 lblsongDuration.Text = "";
                 timer.Stop();
             }

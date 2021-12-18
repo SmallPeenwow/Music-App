@@ -15,7 +15,11 @@ namespace Music_Player
     {
         private int value;
 
-        public Form2(int value)
+        public string dirCurrent;
+
+        //private Connection connection;
+
+        public Form2(int value, string connectDir)
         {
             InitializeComponent();
             
@@ -23,9 +27,11 @@ namespace Music_Player
 
             this.value = value;
 
+            this.dirCurrent = connectDir;
+
             this.Text = nameForm;
 
-            lblDisplay.Text = value == 1 ? lblDisplay.Text = "The word Playlist will be added onto the end of the Playlist made" : value == 2 ? lblDisplay.Text = "Here is where you can add the music" : lblDisplay.Text = "Select playlist from the dropdown and then press\nthe Confirm button to \"Delete\" the playlist";
+            lblDisplay.Text = value == 1 ? lblDisplay.Text = "Here is where your Playlist will be created" : value == 2 ? lblDisplay.Text = "Here is where you can add the music" : lblDisplay.Text = "Select playlist from the dropdown and then press\nthe Confirm button to \"Delete\" the playlist";
         }
 
         private void Form2_Load(object sender, EventArgs e)
@@ -62,7 +68,8 @@ namespace Music_Player
 
                 string[] fileSplits;
 
-                string[] folderName = Directory.GetDirectories(@"C:\Music App\Music Playlists", "*", SearchOption.AllDirectories);
+                //string[] folderName = Directory.GetDirectories(@"C:\Music App\Music Playlists", "*", SearchOption.AllDirectories);
+                string[] folderName = Directory.GetDirectories(dirCurrent, "*", SearchOption.AllDirectories);
 
                 for (int i = 0; i < folderName.Length; i++)
                 {
@@ -85,14 +92,14 @@ namespace Music_Player
 
             if (value == 1)
             {
-                if (!(patternMatch.IsMatch(textBoxMatch)) || string.IsNullOrWhiteSpace(txtPlaylist.Text) || Directory.Exists(txtPlaylist.Text)) // !(txtPlaylist.Text.Contains("Playlist")) Could do this
+                if (!(patternMatch.IsMatch(textBoxMatch)) || string.IsNullOrWhiteSpace(txtPlaylist.Text) || Directory.Exists(txtPlaylist.Text))
                 {
                     MessageBox.Show("Make sure you have entered in a valid Playlist name longer than 3 characters.\n\nPlaylist could already Exist.", "Not Correct", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
-                    string newPath = @"C:\Music App\Music Playlists\" + txtPlaylist.Text + " Playlist";
-
+                    //string newPath = @"C:\Music App\Music Playlists\" + txtPlaylist.Text + " Playlist";
+                    string newPath = dirCurrent + txtPlaylist.Text;
                     Directory.CreateDirectory(newPath);
 
                     MessageBox.Show("Playlist was Created", "Success", MessageBoxButtons.OK);
@@ -103,7 +110,7 @@ namespace Music_Player
             {
                 try
                 {
-                    string deletePath = @"C:\Music App\Music Playlists\" + cmbSelectPlaylist.Text;
+                    string deletePath = dirCurrent + cmbSelectPlaylist.Text;
 
                     Directory.Delete(deletePath, true);
                     MessageBox.Show("Playlist was Deleted", "Success", MessageBoxButtons.OK);
@@ -155,7 +162,7 @@ namespace Music_Player
                     {
                         fileContent = openFile.FileName;
 
-                        string newFileLocation = @"C:\Music App\Music Playlists\" + cmbSelectPlaylist.SelectedItem.ToString() + "\\" + fileSong;
+                        string newFileLocation = dirCurrent + cmbSelectPlaylist.SelectedItem.ToString() + "\\" + fileSong;
 
                         File.Move(fileContent, newFileLocation);
                         MessageBox.Show("Song was added successfully", "Success", MessageBoxButtons.OK);
