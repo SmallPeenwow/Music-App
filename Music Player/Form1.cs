@@ -205,44 +205,43 @@ namespace Music_Player
 
             HashSet<string> dropDownAdd = new HashSet<string>();
 
+            if (currentFilePath.Any() != true)// Checks if List which contains textfile URLs is empty and if is empty displays this message
+            {
+                MessageBox.Show("No music found", "Music", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
             for (int i = 0; i < currentFilePath.Count; i++)
             {
                 string song;
                 string playlist;
-                string urlPath;
+                string urlPath;                
+              
+                fileSplits = currentFilePath[i].Split('\\', ':');
 
-                if (currentFilePath[i].ToString() == "No music in file")// When there is URL in the text file this will be in the textfile to indacate to the user they need to create a playlist and music
+                if (fileSplits[fileSplits.Length - 1].Contains(".mp3"))// If URL path contains music
                 {
-                    MessageBox.Show("No music found", "Music", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    song = fileSplits[fileSplits.Length - 1].Replace(".mp3", "");
+                    playlist = fileSplits[fileSplits.Length - 2];
+                    urlPath = currentFilePath[i];
+
+                    dropDownAdd.Add(playlist);
+                    musicListBox.Items.Add(song);
+
+                    musicValue.Add(urlPath, new Dictionary<string, string>());
+                    musicValue[urlPath].Add(song, playlist);
                 }
-                else
+                else// For when URL only has Playlist
                 {
-                    fileSplits = currentFilePath[i].Split('\\', ':');
+                    song = "";
+                    playlist = fileSplits[fileSplits.Length - 1];
+                    urlPath = currentFilePath[i];
 
-                    if (fileSplits[fileSplits.Length - 1].Contains(".mp3"))// If URL path contains music
-                    {
-                        song = fileSplits[fileSplits.Length - 1].Replace(".mp3", "");
-                        playlist = fileSplits[fileSplits.Length - 2];
-                        urlPath = currentFilePath[i];
+                    dropDownAdd.Add(playlist);
 
-                        dropDownAdd.Add(playlist);
-                        musicListBox.Items.Add(song);
-
-                        musicValue.Add(urlPath, new Dictionary<string, string>());
-                        musicValue[urlPath].Add(song, playlist);
-                    }
-                    else// For when URL only has Playlist
-                    {
-                        song = "";
-                        playlist = fileSplits[fileSplits.Length - 1];
-                        urlPath = currentFilePath[i];
-
-                        dropDownAdd.Add(playlist);
-
-                        musicValue.Add(urlPath, new Dictionary<string, string>());
-                        musicValue[urlPath].Add(song, playlist);
-                    }                   
-                }                               
+                    musicValue.Add(urlPath, new Dictionary<string, string>());
+                    musicValue[urlPath].Add(song, playlist);
+                }                   
+                                              
             }
 
             for (int x = 0; x < dropDownAdd.Count; x++)// Adds Playlist names to dropdown by using hashset that doesn't duplicate elements

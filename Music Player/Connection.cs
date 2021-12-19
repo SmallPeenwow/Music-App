@@ -45,11 +45,6 @@ namespace Music_Player
                     textFileLine = readTextFile.ReadLine();
                     fileConnection.Add(textFileLine);
                 }
-                else
-                {
-                    textFileLine = "No music in file";// When there is no Playlist in the textfile and when just starting application for first time
-                    fileConnection.Add(textFileLine);
-                }
             }
         }
 
