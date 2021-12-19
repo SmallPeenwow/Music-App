@@ -72,21 +72,33 @@ namespace Music_Player
 
         }
 
-        public void playMusic(string music, string playlist)
+        public void playMusic(string music, string playlist)// Plays the music using the URL 
         {
+            string musicUrlKey = "";
+
+            for (int i = 0; i < musicValue.Count; i++)
+            {
+                KeyValuePair<string, Dictionary<string, string>> keyValuePair = musicValue.ElementAt(i);
+                musicUrlKey = keyValuePair.Key;
+
+                if (musicUrlKey.Contains(playlist) && musicUrlKey.Contains(music))
+                {
+                    playMusic(musicUrlKey);
+                }
+            }
             //string willPlay = currentDir + playlist + "\\" + music + ".mp3";
-            //player.URL = willPlay;
+            //player.URL = playlist;
 
-            player.controls.play();
-            
-            musicIndex.Text = music;
-            currentSonglbl.Text = music;
-            currentSonglbl.Font = new Font("Microsoft Sans Serif", 10);
-            lblVolumeDisplay.Text = "Volume : " + player.settings.volume.ToString();
+            //player.controls.play();
 
-            timer.Interval = 200;
-            timer.Tick += new EventHandler(timer1_Tick);
-            timer.Start();
+            //musicIndex.Text = music;
+            //currentSonglbl.Text = music;
+            //currentSonglbl.Font = new Font("Microsoft Sans Serif", 10);
+            //lblVolumeDisplay.Text = "Volume : " + player.settings.volume.ToString();
+
+            //timer.Interval = 200;
+            //timer.Tick += new EventHandler(timer1_Tick);
+            //timer.Start();
         }
 
         // Method that controls the Next and Previous button
@@ -120,8 +132,26 @@ namespace Music_Player
 
                 currentMusic = num >= musicListBox.Items.Count ? currentMusic = musicListBox.Items[musicListBox.Items.Count - 1].ToString() : currentMusic = musicListBox.Items[num].ToString();
 
-                playMusic(currentMusic, playlist);
+                //playMusic(currentMusic, playlist);
             }
+        }
+
+        public void playMusic(string musicUrl)// Plays the music using the URL 
+        {
+            player.URL = musicUrl;
+
+            player.controls.play();
+
+            fileSplits = musicUrl.Split('\\', ':');
+
+            musicIndex.Text = fileSplits[fileSplits.Length - 1].Replace(".mp3", "");
+            currentSonglbl.Text = fileSplits[fileSplits.Length - 1].Replace(".mp3", "");
+            currentSonglbl.Font = new Font("Microsoft Sans Serif", 10);
+            lblVolumeDisplay.Text = "Volume : " + player.settings.volume.ToString();
+
+            timer.Interval = 200;
+            timer.Tick += new EventHandler(timer1_Tick);
+            timer.Start();
         }
 
         // Will check if song is currently playing or if it is paused
@@ -155,10 +185,11 @@ namespace Music_Player
             playSelectlbl.Text = "Select Playlist";
 
             storeOfPlayListSelect.Enabled = false;
-            storeOfPlayListSelect.Visible = false;
+            //storeOfPlayListSelect.Visible = false;
             musicIndex.Enabled = false;
-            musicIndex.Visible = false;
+            //musicIndex.Visible = false;
             musicListBox.SelectionMode = SelectionMode.One;
+            //musicListBox.
             currentSonglbl.Text = "";          
 
             try
@@ -188,24 +219,55 @@ namespace Music_Player
             //string pathSerach = textFile;
             connection = new Connection(pathSearch);
             currentFilePath = connection.fullPathName();
-            
+
+            HashSet<string> dropDownAdd = new HashSet<string>();
             //string[] folderName = Directory.GetDirectories(currentDir, "*", SearchOption.AllDirectories);
-            string[] files;
+            //string[] files;
 
             for (int i = 0; i < currentFilePath.Count; i++)
             {
-                fileSplits = currentFilePath[i].Split('\\', ':');
+                string song;
+                string playlist;
+                string urlPath;
 
-                ListSelecter.Items.Add(fileSplits[fileSplits.Length - 1]);
+                if (currentFilePath[i].ToString() == "No music in file")// When there is URL in the text file this will be in the textfile to indacate to the user they need to create a playlist and music
+                {
+                    MessageBox.Show("No music found", "Music", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    fileSplits = currentFilePath[i].Split('\\', ':');
 
-                string song = fileSplits[fileSplits.Length - 1].Replace(".mp3", "");
-                string playlist = fileSplits[fileSplits.Length - 2];
-                string urlPath = currentFilePath[i];
+                    if (fileSplits[fileSplits.Length - 1].Contains(".mp3"))// If URL path contains music
+                    {
+                        song = fileSplits[fileSplits.Length - 1].Replace(".mp3", "");
+                        playlist = fileSplits[fileSplits.Length - 2];
+                        urlPath = currentFilePath[i];
 
-                musicListBox.Items.Add(song);
+                        dropDownAdd.Add(playlist);
+                        musicListBox.Items.Add(song);
 
-                musicValue.Add(urlPath, new Dictionary<string, string>());
-                musicValue[urlPath].Add(song, playlist);
+                        musicValue.Add(urlPath, new Dictionary<string, string>());
+                        musicValue[urlPath].Add(song, playlist);
+                    }
+                    else// For when URL only has Playlist
+                    {
+                        song = "";
+                        playlist = fileSplits[fileSplits.Length - 1];
+                        urlPath = currentFilePath[i];
+
+                        dropDownAdd.Add(playlist);
+
+                        musicValue.Add(urlPath, new Dictionary<string, string>());
+                        musicValue[urlPath].Add(song, playlist);
+                    }
+
+                    
+                }                               
+
+                //ListSelecter.Items.Add(fileSplits[fileSplits.Length - 2]);
+
+                
                 //files = Directory.GetFiles(folderName[i]);
 
                 //for (int j = 0; j < files.Length; j++)
@@ -222,6 +284,12 @@ namespace Music_Player
                 //        musicValue.Add(song, playlist);
                 //    }
                 //}
+            }
+
+            for (int x = 0; x < dropDownAdd.Count; x++)// Adds Playlist names to dropdown by using hashset that doesn't duplicate elements
+            {
+                string playlistName = dropDownAdd.ElementAt(x);
+                ListSelecter.Items.Add(playlistName);
             }
         }
 
@@ -255,18 +323,35 @@ namespace Music_Player
         {
             try
             {
-                if (ListSelecter.SelectedItem.Equals("All"))
+                if (ListSelecter.SelectedItem.ToString() == "All")// Calls loadPlaylistSong method to reload all the songs and playlist
                 {
                     storeOfPlayListSelect.Text = "All";
                     loadPlaylistSongs();
                 }
-                else
+                else // Gets the music that is in the playlist that was selected in the combobox
                 {
                     musicValue.Clear();
                     musicListBox.Items.Clear();
 
                     string playlistSelected = ListSelecter.SelectedItem.ToString();
                     storeOfPlayListSelect.Text = playlistSelected;
+
+                    for (int i = 0; i < currentFilePath.Count; i++)
+                    {
+                        fileSplits = currentFilePath[i].Split('\\', ':');
+                        string playlist = fileSplits[fileSplits.Length - 2]; // Gets playlist from URL to compare to playlist that was selected in combobox
+
+                        if(playlistSelected == playlist)
+                        {
+                            string song = fileSplits[fileSplits.Length - 1].Replace(".mp3", "");
+                            string urlPath = currentFilePath[i];
+
+                            musicListBox.Items.Add(song);
+
+                            musicValue.Add(urlPath, new Dictionary<string, string>());
+                            musicValue[urlPath].Add(song, playlist);
+                        }                      
+                    }
                   
                     //string[] files = Directory.GetFiles(currentDir + playlistSelected);
                     //for (int i = 0; i < files.Length; i++)
@@ -284,7 +369,7 @@ namespace Music_Player
             }
             catch (Exception loadFail)
             {
-                MessageBox.Show("Was not able to load songs. " + loadFail, "Not Working", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Was not able to load music. " + loadFail, "Not Working", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }                    
         }
 
@@ -293,28 +378,69 @@ namespace Music_Player
             errorDisplayMesslbl.Text = null;
         }
 
-        private String getPlaylistForPlaying(string value)
+        private String getPlaylistForPlaying(string value)// Gets the Playlist that is associated with the music 
         {
             value = musicListBox.SelectedItem.ToString();
 
-            value = musicValue[value].ToString();
+            for (int i = 0; i < musicValue.Count; i++)
+            {
+                KeyValuePair<string, Dictionary<string, string>> keyValuePair = musicValue.ElementAt(i);
+                string musicKey = keyValuePair.Key;
+                Dictionary<string, string> dicMusicValue = keyValuePair.Value;
+                
+                //string songValue = fileSplits[fileSplits.Length - 1].Replace(".mp3", "");// Gets music name to get the value from the Dictionary
+                //string playlistValue = dicMusicValue[value].ToString();
+                string playlistValue = dicMusicValue.FirstOrDefault(x => x.Key == musicListBox.SelectedItem.ToString()).Value;
 
-            return value;
+                if (musicKey.Contains(playlistValue) && musicKey.Contains(musicListBox.SelectedItem.ToString())) // Checks to see if URL has the Playlist name in it
+                {
+                    value = playlistValue;
+                    break;
+                }
+            }
+
+            //value = musicValue[value].Values.ToString();
+
+            //value = musicValue[value].ToString();
+
+            return value; // returns the Playlist name
         }
 
         private String getPlaylistForPlaying(string value, int number)
-        {                           
-            int num = Array.IndexOf(musicValue.Keys.ToArray(), value);
+        {
+            //int num = Array.IndexOf(musicValue.Keys.ToArray(), value);
+            Dictionary<string, string> valueMusicValue = new Dictionary<string, string>();
+            string musicUrlKey = "";
+            int num = 0;
+            string playlistStored = "";
+
+            for (int i = 0; i < musicValue.Count; i++)
+            {
+                KeyValuePair<string, Dictionary<string, string>> keyValuePair = musicValue.ElementAt(i);
+                musicUrlKey = keyValuePair.Key;
+                valueMusicValue = keyValuePair.Value;
+
+                string playlistValue = valueMusicValue.ElementAt(i).Value;// Gets Playlist name
+
+                if (musicUrlKey.Contains(playlistValue))
+                {
+                    num = Array.IndexOf(valueMusicValue.Keys.ToArray(), value);
+                    playlistStored = playlistValue;
+                    break;
+                }               
+            }
 
             num = number == 1 ? num + 1 : num - 1;         
 
             num = num > musicValue.Count - 1 ? num = 0 : num < 0 ? num = Array.IndexOf(musicValue.Keys.ToArray(), musicValue.Keys.Last()) : num;
 
-            //value = musicValue.ElementAt(num).Value;
+            //string playlistStored = valueMusicValue.ElementAt(num).Value; // Gets Playlist name
 
-            storeOfPlayListSelect.Text = value;
-            
-            return value;
+            storeOfPlayListSelect.Text = playlistStored; // Stores Playlist name in textbox for referencing when next or previous or play music
+
+            musicUrlKey = musicValue.ElementAt(num).Key;
+
+            return musicUrlKey;
         }
 
         private void musicListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -323,6 +449,7 @@ namespace Music_Player
             if (musicListBox.SelectedIndex != -1) 
             {
                 playlistSelected = getPlaylistForPlaying(playlistSelected);
+                storeOfPlayListSelect.Text = playlistSelected;
             }        
                      
             // Sets the time of the song to zero so the current song select by the user can be played
@@ -331,7 +458,7 @@ namespace Music_Player
                 time = 0;
             }
 
-            storeOfPlayListSelect.Text = playlistSelected;
+            //storeOfPlayListSelect.Text = playlistSelected;
         }
 
         // Checks for values and then sends to playMusic method
@@ -341,9 +468,11 @@ namespace Music_Player
             {
                 int nextNumber = 1;
                 string playSelected = musicIndex.Text;
-                string playlistSelected = getPlaylistForPlaying(playSelected, nextNumber);               
+                //string playlistSelected = getPlaylistForPlaying(playSelected, nextNumber);// Uses the music to search for the playlist
+                string urlPlayMusic = getPlaylistForPlaying(playSelected, nextNumber);
+                //playMusic(playSelected, playlistSelected, nextNumber);
 
-                playMusic(playSelected, playlistSelected, nextNumber);
+                // just get url
             }
             else
             {
@@ -359,9 +488,11 @@ namespace Music_Player
             {
                 int nextNumber = 2;
                 string playSelected = musicIndex.Text;
-                string playlistSelected = getPlaylistForPlaying(playSelected, nextNumber);              
+                //string playlistSelected = getPlaylistForPlaying(playSelected, nextNumber);// Uses the music to search for the playlist              
+                string urlPlayMusic = getPlaylistForPlaying(playSelected, nextNumber);
+                //playMusic(playSelected, playlistSelected, nextNumber);
 
-                playMusic(playSelected, playlistSelected, nextNumber); 
+                // just get url
             }
             else
             {

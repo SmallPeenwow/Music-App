@@ -66,7 +66,7 @@ namespace Music_Player
                 btnUpload.Visible = value == 3 ? btnUpload.Visible = false : btnUpload.Visible = true;
                 lblShowDo.Text = value == 3 ? lblShowDo.Text = "" : lblShowDo.Text = "Select a Playlist first!";
 
-                string[] fileSplits;
+                //string[] fileSplits;
                 
                 //string[] folderName = Directory.GetDirectories(dirCurrent, "*", SearchOption.AllDirectories);
                      
@@ -157,8 +157,8 @@ namespace Music_Player
             {               
                 OpenFileDialog openFile = new OpenFileDialog();
 
-                string filePath = Environment.SpecialFolder.UserProfile + "\\Downloads";
-                openFile.InitialDirectory = filePath;
+                //string filePath = Environment.SpecialFolder.UserProfile + "\\Downloads";
+                //openFile.InitialDirectory = filePath;
                 openFile.Title = "Add Song";
                 openFile.Filter = "Music(.mp3)|*.mp3";
 

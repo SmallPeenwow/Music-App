@@ -28,7 +28,8 @@ namespace Music_Player
         // then will read the contents of the file
         public Connection(string directoryPath)
         {
-            string cutEndpath = "bin";
+            //string cutEndpath = "bin";
+            string cutEndpath = "Music Player";
             int indexOfBinPath = directoryPath.IndexOf(cutEndpath);
 
             string pathFiletext = directoryPath.Substring(0, indexOfBinPath);
