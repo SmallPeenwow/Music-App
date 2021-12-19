@@ -51,13 +51,12 @@ namespace Music_Player
                     player.controls.play();
                     timer.Start();
                 }
-                else if (!(musicListBox.SelectedIndex == -1) && !(storeOfPlayListSelect.Text == ""))
+                else if (musicListBox.SelectedIndex != -1 || (musicListBox.SelectedIndex != -1 && storeOfPlayListSelect.Text != "" && musicIndex.Text != ""))
                 {
                     string playSelected = musicListBox.SelectedItem.ToString(); 
                     string playlistSelected = storeOfPlayListSelect.Text.ToString();                    
 
-                    playMusic(playSelected, playlistSelected);
-                    
+                    playMusic(playSelected, playlistSelected);                   
                 }
                 else
                 {
@@ -115,11 +114,15 @@ namespace Music_Player
                 {
                     currentMusic = musicListBox.Items[0].ToString();
 
+                    musicListBox.SelectedIndex = musicListBox.SelectedIndex = 0;// moves down the ListBox
+
                     playMusic(currentMusic, playlist);
                 }
                 else
                 {
                     currentMusic = musicListBox.Items[num].ToString();
+
+                    musicListBox.SelectedIndex = num; // Moves down the ListBox
 
                     playMusic(currentMusic, playlist);
                 }                              
@@ -132,7 +135,9 @@ namespace Music_Player
 
                 currentMusic = num >= musicListBox.Items.Count ? currentMusic = musicListBox.Items[musicListBox.Items.Count - 1].ToString() : currentMusic = musicListBox.Items[num].ToString();
 
-                //playMusic(currentMusic, playlist);
+                musicListBox.SelectedIndex = num; // Moves up the ListBox
+
+                playMusic(currentMusic, playlist);
             }
         }
 
@@ -167,6 +172,7 @@ namespace Music_Player
                 player.settings.setMode("loop", false);
                 btnLoopSongs.Text = "Loop";
                 btnLoopClicked = 1;
+                musicListBox.ClearSelected();
 
                 lblsongDuration.Text = "";
                 timer.Stop();
@@ -380,21 +386,30 @@ namespace Music_Player
 
         private String getPlaylistForPlaying(string value)// Gets the Playlist that is associated with the music 
         {
-            value = musicListBox.SelectedItem.ToString();
+            //value = musicListBox.SelectedItem.ToString();
 
             for (int i = 0; i < musicValue.Count; i++)
             {
                 KeyValuePair<string, Dictionary<string, string>> keyValuePair = musicValue.ElementAt(i);
                 string musicKey = keyValuePair.Key;
                 Dictionary<string, string> dicMusicValue = keyValuePair.Value;
-                
+
+                for (int x = 0; x < dicMusicValue.Count; x++)
+                {
+                    KeyValuePair<string, string> keyValuePlaylist = dicMusicValue.ElementAt(x);
+                    string playlistValue = keyValuePlaylist.Value;
+
+                    if (musicKey.Contains(playlistValue) && musicKey.Contains(musicListBox.SelectedItem.ToString())) // Checks to see if URL has the Playlist name in it
+                    {
+                        value = playlistValue;
+                        break;
+                    }
+                }               
                 //string songValue = fileSplits[fileSplits.Length - 1].Replace(".mp3", "");// Gets music name to get the value from the Dictionary
                 //string playlistValue = dicMusicValue[value].ToString();
-                string playlistValue = dicMusicValue.FirstOrDefault(x => x.Key == musicListBox.SelectedItem.ToString()).Value;
-
-                if (musicKey.Contains(playlistValue) && musicKey.Contains(musicListBox.SelectedItem.ToString())) // Checks to see if URL has the Playlist name in it
+                //string playlistValue = dicMusicValue.FirstOrDefault(x => x.Key == musicSelect).Value;
+                if(value != "")
                 {
-                    value = playlistValue;
                     break;
                 }
             }
@@ -406,41 +421,63 @@ namespace Music_Player
             return value; // returns the Playlist name
         }
 
-        private String getPlaylistForPlaying(string value, int number)
+        private String getPlaylistForPlaying(string currentMusic, int number)// value is music name
         {
             //int num = Array.IndexOf(musicValue.Keys.ToArray(), value);
-            Dictionary<string, string> valueMusicValue = new Dictionary<string, string>();
+            Dictionary<string, string> valueMusicValue = new Dictionary<string, string>();// Value of dictionary
+            Dictionary<string, string> compareValues = new Dictionary<string, string>();// Used to store all the keys and values 
             string musicUrlKey = "";
-            int num = 0;
-            string playlistStored = "";
+            int num = 0; // used to get the element in the musicValue to get the correct URL
+            string playlistStored = "";       
 
             for (int i = 0; i < musicValue.Count; i++)
             {
                 KeyValuePair<string, Dictionary<string, string>> keyValuePair = musicValue.ElementAt(i);
                 musicUrlKey = keyValuePair.Key;
                 valueMusicValue = keyValuePair.Value;
-
-                string playlistValue = valueMusicValue.ElementAt(i).Value;// Gets Playlist name
-
-                if (musicUrlKey.Contains(playlistValue))
+                
+                for (int x = 0; x < valueMusicValue.Count; x++)// iterates through the second dictionary to get the value of the playlist 
                 {
-                    num = Array.IndexOf(valueMusicValue.Keys.ToArray(), value);
-                    playlistStored = playlistValue;
-                    break;
-                }               
+                    KeyValuePair<string, string> getsPlaylist = valueMusicValue.ElementAt(x);
+                    string musicKey = getsPlaylist.Key;
+                    string playlistValue = getsPlaylist.Value;
+
+                    compareValues.Add(musicKey, playlistValue);                  
+                }
             }
 
-            num = number == 1 ? num + 1 : num - 1;         
+            //for(int j = 0; j < compareValues.Count; j++)
+            //{
+            //    num = Array.IndexOf(compareValues.Keys.ToArray(), currentMusic);
+            //}
 
-            num = num > musicValue.Count - 1 ? num = 0 : num < 0 ? num = Array.IndexOf(musicValue.Keys.ToArray(), musicValue.Keys.Last()) : num;
+            //if (musicUrlKey.Contains(playlistValue) && musicUrlKey.Contains(currentMusic))// if the playlist and music are contained in the URL it gets the index in the dictionary
+            //{
+                //num = Array.IndexOf(valueMusicValue.Keys.ToArray(), currentMusic);
 
-            //string playlistStored = valueMusicValue.ElementAt(num).Value; // Gets Playlist name
+                //num = number == 1 ? num + 1 : num - 1;// Will increase number or decrease depending on if Next or Previous button was clicked
+
+                //num = num > valueMusicValue.Count - 1 ? num = 0 : num < 0 ? num = Array.IndexOf(valueMusicValue.Keys.ToArray(), valueMusicValue.Keys.Last()) : num;
+
+                //playlistStored = valueMusicValue.ElementAt(num).Value; // Gets Playlist name
+                
+            // break;
+            //}
+            //num = number == 1 ? num + 1 : num - 1;
+
+            //num = num > musicValue.Count - 1 ? num = 0 : num < 0 ? num = Array.IndexOf(musicValue.Keys.ToArray(), musicValue.Keys.Last()) : num;
+
+            num = Array.IndexOf(compareValues.Keys.ToArray(), currentMusic);
+
+            num = number == 1 ? num + 1 : num - 1;// Will increase number or decrease depending on if Next or Previous button was clicked
+
+            num = num > compareValues.Count - 1 ? num = 0 : num < 0 ? num = Array.IndexOf(compareValues.Keys.ToArray(), compareValues.Keys.Last()) : num;           
+
+            playlistStored = compareValues.ElementAt(num).Value; // Gets Playlist name
 
             storeOfPlayListSelect.Text = playlistStored; // Stores Playlist name in textbox for referencing when next or previous or play music
 
-            musicUrlKey = musicValue.ElementAt(num).Key;
-
-            return musicUrlKey;
+            return playlistStored;
         }
 
         private void musicListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -468,11 +505,9 @@ namespace Music_Player
             {
                 int nextNumber = 1;
                 string playSelected = musicIndex.Text;
-                //string playlistSelected = getPlaylistForPlaying(playSelected, nextNumber);// Uses the music to search for the playlist
-                string urlPlayMusic = getPlaylistForPlaying(playSelected, nextNumber);
-                //playMusic(playSelected, playlistSelected, nextNumber);
-
-                // just get url
+                string playlistSelected = getPlaylistForPlaying(playSelected, nextNumber);// Uses the music to search for the playlist
+                //string urlPlayMusic = getPlaylistForPlaying(playSelected, nextNumber);
+                playMusic(playSelected, playlistSelected, nextNumber);
             }
             else
             {
@@ -488,11 +523,9 @@ namespace Music_Player
             {
                 int nextNumber = 2;
                 string playSelected = musicIndex.Text;
-                //string playlistSelected = getPlaylistForPlaying(playSelected, nextNumber);// Uses the music to search for the playlist              
-                string urlPlayMusic = getPlaylistForPlaying(playSelected, nextNumber);
-                //playMusic(playSelected, playlistSelected, nextNumber);
-
-                // just get url
+                string playlistSelected = getPlaylistForPlaying(playSelected, nextNumber);// Uses the music to search for the playlist              
+                //string urlPlayMusic = getPlaylistForPlaying(playSelected, nextNumber);
+                playMusic(playSelected, playlistSelected, nextNumber);               
             }
             else
             {
