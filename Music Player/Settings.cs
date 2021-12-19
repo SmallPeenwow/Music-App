@@ -41,7 +41,7 @@ namespace Music_Player
 
             cmbSelectNumber.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbSelectNumber.Items.AddRange(numbers);
-            lblDisplayValid.Text = "Select number you\nwant your music to\nincrement by";
+            lblDisplayValid.Text = "Select Volume you\nwant your music to\nincrement by";
         }
 
         private void btnConfirm_Click(object sender, EventArgs e)
@@ -59,6 +59,11 @@ namespace Music_Player
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void Settings_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
