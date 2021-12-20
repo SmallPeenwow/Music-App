@@ -207,7 +207,7 @@ namespace Music_Player
 
             if (currentFilePath.Any() != true)// Checks if List which contains textfile URLs is empty and if is empty displays this message
             {
-                MessageBox.Show("No music found", "Music", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("No music found\nYou can go to the Menu and create a playlist\nthen you can add your music into your playlist", "Music", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
             for (int i = 0; i < currentFilePath.Count; i++)
@@ -236,12 +236,14 @@ namespace Music_Player
                     playlist = fileSplits[fileSplits.Length - 1];
                     urlPath = currentFilePath[i];
 
-                    dropDownAdd.Add(playlist);
+                    if(urlPath != "Mp3 Music will go") // The first line of the Playlist will be this for new users and will not add it when in file
+                    {
+                        dropDownAdd.Add(playlist);
 
-                    musicValue.Add(urlPath, new Dictionary<string, string>());
-                    musicValue[urlPath].Add(song, playlist);
-                }                   
-                                              
+                        musicValue.Add(urlPath, new Dictionary<string, string>());
+                        musicValue[urlPath].Add(song, playlist);
+                    }                 
+                }                                                               
             }
 
             for (int x = 0; x < dropDownAdd.Count; x++)// Adds Playlist names to dropdown by using hashset that doesn't duplicate elements
@@ -485,10 +487,12 @@ namespace Music_Player
                 if (player.settings.mute == true)
                 {                   
                     player.settings.mute = false;
+                    btnMute.Text = "mute";
                 }
                 else
                 {
                     player.settings.mute =  true;
+                    btnMute.Text = "unmate";
                 }
             }
             else

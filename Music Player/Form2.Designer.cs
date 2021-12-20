@@ -37,11 +37,15 @@ namespace Music_Player
             this.lblTellLength = new System.Windows.Forms.Label();
             this.cmbSelectPlaylist = new System.Windows.Forms.ComboBox();
             this.lblShowDo = new System.Windows.Forms.Label();
+            this.lstMusicDisplay = new System.Windows.Forms.ListBox();
+            this.btnSelectFolder = new System.Windows.Forms.Button();
+            this.lblSelectFolder = new System.Windows.Forms.Label();
+            this.lblDefaultLocation = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // txtPlaylist
             // 
-            this.txtPlaylist.Location = new System.Drawing.Point(12, 27);
+            this.txtPlaylist.Location = new System.Drawing.Point(13, 20);
             this.txtPlaylist.Name = "txtPlaylist";
             this.txtPlaylist.Size = new System.Drawing.Size(147, 20);
             this.txtPlaylist.TabIndex = 0;
@@ -49,7 +53,7 @@ namespace Music_Player
             // 
             // btnConfirm
             // 
-            this.btnConfirm.Location = new System.Drawing.Point(11, 83);
+            this.btnConfirm.Location = new System.Drawing.Point(12, 126);
             this.btnConfirm.Name = "btnConfirm";
             this.btnConfirm.Size = new System.Drawing.Size(99, 29);
             this.btnConfirm.TabIndex = 1;
@@ -59,7 +63,7 @@ namespace Music_Player
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(161, 83);
+            this.btnCancel.Location = new System.Drawing.Point(120, 126);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(100, 29);
             this.btnCancel.TabIndex = 2;
@@ -89,11 +93,11 @@ namespace Music_Player
             // lblTellLength
             // 
             this.lblTellLength.AutoSize = true;
-            this.lblTellLength.Location = new System.Drawing.Point(11, 54);
+            this.lblTellLength.Location = new System.Drawing.Point(9, 4);
             this.lblTellLength.Name = "lblTellLength";
-            this.lblTellLength.Size = new System.Drawing.Size(29, 13);
+            this.lblTellLength.Size = new System.Drawing.Size(67, 13);
             this.lblTellLength.TabIndex = 6;
-            this.lblTellLength.Text = "label";
+            this.lblTellLength.Text = "lengthCheck";
             // 
             // cmbSelectPlaylist
             // 
@@ -113,13 +117,55 @@ namespace Music_Player
             this.lblShowDo.TabIndex = 8;
             this.lblShowDo.Text = "label3";
             // 
+            // lstMusicDisplay
+            // 
+            this.lstMusicDisplay.FormattingEnabled = true;
+            this.lstMusicDisplay.HorizontalScrollbar = true;
+            this.lstMusicDisplay.Location = new System.Drawing.Point(237, 8);
+            this.lstMusicDisplay.Name = "lstMusicDisplay";
+            this.lstMusicDisplay.Size = new System.Drawing.Size(130, 147);
+            this.lstMusicDisplay.TabIndex = 9;
+            this.lstMusicDisplay.TabStop = false;
+            // 
+            // btnSelectFolder
+            // 
+            this.btnSelectFolder.Location = new System.Drawing.Point(12, 80);
+            this.btnSelectFolder.Name = "btnSelectFolder";
+            this.btnSelectFolder.Size = new System.Drawing.Size(99, 30);
+            this.btnSelectFolder.TabIndex = 10;
+            this.btnSelectFolder.Text = "Select Folder";
+            this.btnSelectFolder.UseVisualStyleBackColor = true;
+            this.btnSelectFolder.Click += new System.EventHandler(this.btnSelectFolder_Click);
+            // 
+            // lblSelectFolder
+            // 
+            this.lblSelectFolder.AutoSize = true;
+            this.lblSelectFolder.Location = new System.Drawing.Point(111, 80);
+            this.lblSelectFolder.Name = "lblSelectFolder";
+            this.lblSelectFolder.Size = new System.Drawing.Size(109, 13);
+            this.lblSelectFolder.TabIndex = 11;
+            this.lblSelectFolder.Text = "select folder message";
+            // 
+            // lblDefaultLocation
+            // 
+            this.lblDefaultLocation.AutoSize = true;
+            this.lblDefaultLocation.Location = new System.Drawing.Point(10, 43);
+            this.lblDefaultLocation.Name = "lblDefaultLocation";
+            this.lblDefaultLocation.Size = new System.Drawing.Size(95, 13);
+            this.lblDefaultLocation.TabIndex = 12;
+            this.lblDefaultLocation.Text = "tell default location";
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.ClientSize = new System.Drawing.Size(334, 131);
+            this.ClientSize = new System.Drawing.Size(369, 160);
             this.ControlBox = false;
+            this.Controls.Add(this.lblDefaultLocation);
+            this.Controls.Add(this.lblSelectFolder);
+            this.Controls.Add(this.btnSelectFolder);
+            this.Controls.Add(this.lstMusicDisplay);
             this.Controls.Add(this.lblShowDo);
             this.Controls.Add(this.cmbSelectPlaylist);
             this.Controls.Add(this.lblTellLength);
@@ -151,5 +197,9 @@ namespace Music_Player
         private System.Windows.Forms.Label lblTellLength;
         private System.Windows.Forms.ComboBox cmbSelectPlaylist;
         private System.Windows.Forms.Label lblShowDo;
+        private System.Windows.Forms.ListBox lstMusicDisplay;
+        private System.Windows.Forms.Button btnSelectFolder;
+        private System.Windows.Forms.Label lblSelectFolder;
+        private System.Windows.Forms.Label lblDefaultLocation;
     }
 }

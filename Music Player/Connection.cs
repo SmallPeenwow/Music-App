@@ -34,18 +34,20 @@ namespace Music_Player
             string pathFiletext = directoryPath.Substring(0, indexOfBinPath);
             string[] getfile = Directory.GetFiles(pathFiletext, "PlaylistAndSong*", SearchOption.AllDirectories); // Gest the textfile location named PlaylistAndSong
 
-            StreamReader readTextFile = new StreamReader(getfile[0]);
+            StreamReader readTextFile = new StreamReader(getfile[0]);                 
 
             string textFileLine;
-            
+
             while (!(readTextFile.EndOfStream)) // Reads all the lines in the textfile and stops when gets to the end of the textfile text
             {
                 if (readTextFile != null)
                 {
-                    textFileLine = readTextFile.ReadLine();
+                    textFileLine = readTextFile.ReadLine();                    
+
                     fileConnection.Add(textFileLine);
                 }
             }
+            readTextFile.Close();
         }
 
         // Sends List of all the URL paths to Fomr1 to be loaded into the Comobobox and ListBox

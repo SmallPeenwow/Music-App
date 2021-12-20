@@ -19,6 +19,8 @@ namespace Music_Player
 
         string musicFileName;
 
+        string playlistFolder = ""; // Used to store the path to the Select Folder 
+
         public Form2(int value, List<string> connectDir)
         {
             InitializeComponent();
@@ -31,13 +33,16 @@ namespace Music_Player
 
             this.Text = nameForm;
 
-            lblDisplay.Text = value == 1 ? lblDisplay.Text = "Here is where your Playlist will be created" : value == 2 ? lblDisplay.Text = "Here is where you can add the music" : lblDisplay.Text = "Select playlist from the dropdown and then press\nthe Confirm button to \"Delete\" the playlist";
+            //lblDisplay.Text = value == 1 ? lblDisplay.Text = "Here is where your Playlist will be created" : value == 2 ? lblDisplay.Text = "Here is where you can add the music" : lblDisplay.Text = "Select playlist from the dropdown and then press\nthe Confirm button to \"Delete\" the playlist";
+            lblDisplay.Text = value == 1 ? lblDisplay.Text = "" : value == 2 ? lblDisplay.Text = "" : lblDisplay.Text = "Select playlist from the dropdown and then press\nthe Confirm button to \"Delete\" the playlist";
         }
 
         private void Form2_Load(object sender, EventArgs e)
         {
             txtPlaylist.MaxLength = 50;
             btnConfirm.Enabled = false;
+
+            
            
             if(value == 1)
             {
@@ -49,6 +54,13 @@ namespace Music_Player
                 cmbSelectPlaylist.Enabled = false;
                 cmbSelectPlaylist.Visible = false;
                 cmbSelectPlaylist.TabStop = false;
+                lstMusicDisplay.Visible = false;
+                lstMusicDisplay.Enabled = false;
+                //lblSelectFolder.Text = "Your Playlist will be stored\n in a folder of your choice";
+                lblSelectFolder.Text = "";
+                lblDefaultLocation.Text = "By not selecting a folder your Playlist will be given\n the default location in your Music folder";
+
+                this.Size = new Size(280, 199);
             }
             else
             {
@@ -91,18 +103,55 @@ namespace Music_Player
 
             if (value == 1)
             {
-                if (!(patternMatch.IsMatch(textBoxMatch)) || string.IsNullOrWhiteSpace(txtPlaylist.Text) || Directory.Exists(txtPlaylist.Text))
+                string alertError = "";
+                bool checkFailed = false;
+
+                // Checks which one has thrown the error and then gives it number to give the right message to display
+                int numberCheckFalse = !patternMatch.IsMatch(textBoxMatch) ? numberCheckFalse = 1 : string.IsNullOrWhiteSpace(txtPlaylist.Text) ? numberCheckFalse = 2 : numberCheckFalse = 0;
+
+                alertError = numberCheckFalse == 1 ? alertError = "Enter in a Valid Playlist name longer than 4 characters" : numberCheckFalse == 2 ? alertError = "Pressing the spacebar 5 times is not a valid Playlist name" : alertError = "true";
+
+                try
                 {
-                    MessageBox.Show("Make sure you have entered in a valid Playlist name longer than 4 characters.\n\nPlaylist could already Exist.", "Not Correct", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    checkFailed = Convert.ToBoolean(alertError);
+                }
+                catch
+                {
+                    // if chechFailed couldn't convert to true it would be false still and then display the correct error message
+                }
+
+                //if (!(patternMatch.IsMatch(textBoxMatch)) || string.IsNullOrWhiteSpace(txtPlaylist.Text) || Directory.Exists(txtPlaylist.Text))
+                //{
+                //    MessageBox.Show("Make sure you have entered in a valid Playlist name longer than 4 characters.\n\nPlaylist could already Exist.", "Not Correct", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //}
+                if (checkFailed != true)
+                {
+                    MessageBox.Show(alertError, "Not Correct", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else if(playlistFolder == "")
+                {
+                    DialogResult makeSureFolder = MessageBox.Show("You will be adding your Playlist to the default loaction on your PC which will be the Music folder", "Create Playlist", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if(makeSureFolder == DialogResult.Yes)
+                    {
+                        //Environment.SpecialFolder defaultFolder = Environment.SpecialFolder.MyMusic; 
+                        //string name = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);                       
+                        //playlistFolder = Environment.GetFolderPath(defaultFolder);
+
+                        playlistFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);// Gets default location which is the user Music Folder
+
+                        CreatePlaylist(playlistFolder);
+                    }
                 }
                 else
                 {
-                    string newPath = dirCurrent + txtPlaylist.Text;
-                    Directory.CreateDirectory(newPath);
+                    CreatePlaylist(playlistFolder);
 
-                    MessageBox.Show("Playlist was Created", "Success", MessageBoxButtons.OK);
-                    this.Close();
-                }              
+                    //string newPath = dirCurrent + txtPlaylist.Text;
+                    //Directory.CreateDirectory(newPath);
+                    //MessageBox.Show("Playlist was Created", "Success", MessageBoxButtons.OK);
+                    //this.Close();
+                }
             }
             else if (value == 2)
             {
@@ -131,6 +180,40 @@ namespace Music_Player
             }         
         }
 
+        private void CreatePlaylist(string folderName) // Will Create the playlist in the specified location
+        {
+            string newPath = folderName + "\\" + txtPlaylist.Text;
+
+            if (!Directory.Exists(newPath))
+            {
+                Directory.CreateDirectory(newPath); // Creates the Folder loaction
+
+                WriteToTextFile(newPath);
+
+                MessageBox.Show("Playlist was Created", "Success", MessageBoxButtons.OK);
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show("The Folder in which you are stroring the Playlist already exists", "Create Playlist", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }         
+        }
+
+        private void WriteToTextFile(string urlPath)// Will store the Url Path of the folder
+        {
+            string pathSearch = Directory.GetCurrentDirectory();
+            string cutEndpath = "Music Player";
+            int indexOfBinPath = pathSearch.IndexOf(cutEndpath); // Gets the index of where the cut off for the URL begins
+
+            string pathFiletext = pathSearch.Substring(0, indexOfBinPath);
+            string[] getfile = Directory.GetFiles(pathFiletext, "PlaylistAndSong*", SearchOption.AllDirectories); // Gest the textfile location named PlaylistAndSong
+
+            StreamWriter writeUrlPath = new StreamWriter(getfile[0], true);
+
+            writeUrlPath.WriteLine(urlPath);
+            writeUrlPath.Close();
+        }
+
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -157,7 +240,7 @@ namespace Music_Player
             {               
                 OpenFileDialog openFile = new OpenFileDialog();
 
-                //string filePath = Environment.SpecialFolder.UserProfile + "\\Downloads";
+                //string filePath = Environment.SpecialFolder.UserProfile + "\\Downloads"; // Add ToString() might work
                 //openFile.InitialDirectory = filePath;
                 openFile.Title = "Add Song";
                 openFile.Filter = "Music(.mp3)|*.mp3";
@@ -203,6 +286,22 @@ namespace Music_Player
                     lblShowDo.Visible = false;
                 }
             }            
+        }
+
+        private void btnSelectFolder_Click(object sender, EventArgs e)// Gets the Location for in Which the user wants to create their Playlist
+        {
+            FolderBrowserDialog browserFolders = new FolderBrowserDialog();
+
+            //Environment.SpecialFolder openDefault = Environment.SpecialFolder.MyMusic;
+            //browserFolders.RootFolder = openDefault;
+            browserFolders.Description = "Select Folder";
+
+            if(browserFolders.ShowDialog() == DialogResult.OK)
+            {
+                playlistFolder = browserFolders.SelectedPath;
+                lblDefaultLocation.Text = "";
+                lblSelectFolder.Text = "Your Playlist will be stored\n in the folder of your choice";
+            }
         }
     }
 }
