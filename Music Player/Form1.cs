@@ -159,6 +159,7 @@ namespace Music_Player
                 btnLoopSongs.Text = "Loop";
                 btnLoopClicked = 1;
                 musicListBox.ClearSelected();
+                time = 0;
 
                 lblsongDuration.Text = "";
                 timer.Stop();
@@ -235,14 +236,11 @@ namespace Music_Player
                     song = "";
                     playlist = fileSplits[fileSplits.Length - 1];
                     urlPath = currentFilePath[i];
+                  
+                    dropDownAdd.Add(playlist);
 
-                    if(urlPath != "Mp3 Music will go") // The first line of the Playlist will be this for new users and will not add it when in file
-                    {
-                        dropDownAdd.Add(playlist);
-
-                        musicValue.Add(urlPath, new Dictionary<string, string>());
-                        musicValue[urlPath].Add(song, playlist);
-                    }                 
+                    musicValue.Add(urlPath, new Dictionary<string, string>());
+                    musicValue[urlPath].Add(song, playlist);                                  
                 }                                                               
             }
 
@@ -256,7 +254,11 @@ namespace Music_Player
 
         private void pause_Click(object sender, EventArgs e)
         {
-            if(player.playState == WMPPlayState.wmppsPlaying)
+            if(player.playState == WMPPlayState.wmppsPaused)
+            {
+                MessageBox.Show("Music is currently Paused. Press the Play button to continue the music.", "Music Pasued", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else if(player.playState == WMPPlayState.wmppsPlaying)
             {
                 time = player.controls.currentPosition;
                 player.controls.pause();
@@ -287,7 +289,6 @@ namespace Music_Player
                 if (ListSelecter.SelectedItem.ToString() == "All")// Calls loadPlaylistSong method to reload all the songs and playlist
                 {
                     storeOfPlayListSelect.Text = "All";
-                    //ListSelecter.Items.Remove("All");
                     loadPlaylistSongs();
                 }
                 else // Gets the music that is in the playlist that was selected in the combobox
@@ -295,24 +296,41 @@ namespace Music_Player
                     musicValue.Clear();
                     musicListBox.Items.Clear();
 
+                    List<string> PlaylistToPlay = new List<string>(); // Adds the playlist Path to only loop instead of all of them
+
                     string playlistSelected = ListSelecter.SelectedItem.ToString();
                     storeOfPlayListSelect.Text = playlistSelected;
 
-                    for (int i = 0; i < currentFilePath.Count; i++)
+                    for(int x = 0; x < currentFilePath.Count; x++)
                     {
-                        fileSplits = currentFilePath[i].Split('\\', ':');
+                        if (currentFilePath[x].Contains(playlistSelected))
+                        {
+                            PlaylistToPlay.Add(currentFilePath[x]);
+                        }
+                    }
+
+                    for (int i = 0; i < PlaylistToPlay.Count; i++)
+                    {
+                        fileSplits = PlaylistToPlay[i].Split('\\', ':');
                         string playlist = fileSplits[fileSplits.Length - 2]; // Gets playlist from URL to compare to playlist that was selected in combobox
 
-                        if(playlistSelected == playlist)
+                        if(playlistSelected == playlist)// Checks if the playlist is the second last item in the Path and if not. The playlist has no music
                         {
                             string song = fileSplits[fileSplits.Length - 1].Replace(".mp3", "");
-                            string urlPath = currentFilePath[i];
+                            string urlPath = PlaylistToPlay[i];
 
                             musicListBox.Items.Add(song);
 
                             musicValue.Add(urlPath, new Dictionary<string, string>());
                             musicValue[urlPath].Add(song, playlist);
-                        }                      
+                        }
+                        else // Tells you there is no music in the Playlist and then returns to the All playlist select
+                        {
+                            MessageBox.Show("There is no music in this current Playlist", "Our Muisc", MessageBoxButtons.OK);
+                            loadPlaylistSongs();
+                            ListSelecter.SelectedIndex = 0;
+                            storeOfPlayListSelect.Text = "All";
+                        }
                     }                  
                 }                
             }
@@ -398,13 +416,14 @@ namespace Music_Player
             {
                 playlistSelected = getPlaylistForPlaying(playlistSelected);
                 storeOfPlayListSelect.Text = playlistSelected;
+                time = 0; // Sets the time of the song to zero so the current song select by the user can be played
             }        
                      
             // Sets the time of the song to zero so the current song select by the user can be played
-            if (musicListBox.SelectedIndex > -1)
-            {
-                time = 0;
-            }
+            //if (musicListBox.SelectedIndex > -1)
+            //{
+            //    time = 0;
+            //}
         }
 
         // Checks for values and then sends to playMusic method

@@ -28,6 +28,8 @@ namespace Music_Player
         // then will read the contents of the file
         public Connection(string directoryPath)
         {
+            string[] folderNames; // Stores the Path of the Folder Playlists
+
             string cutEndpath = "Music Player";
             int indexOfBinPath = directoryPath.IndexOf(cutEndpath); // Gets the index of where the cut off for the URL begins
 
@@ -42,9 +44,24 @@ namespace Music_Player
             {
                 if (readTextFile != null)
                 {
-                    textFileLine = readTextFile.ReadLine();                    
+                    textFileLine = readTextFile.ReadLine();// Gest Path of playlist
 
-                    fileConnection.Add(textFileLine);
+                    if (textFileLine != "Mp3 Music will go")
+                    {                      
+                        folderNames = Directory.GetFiles(textFileLine, "*", SearchOption.TopDirectoryOnly);// Gets the music in the Playlist
+
+                        if(folderNames == null || folderNames.Length == 0)// Checks if playlist has no music
+                        {
+                            fileConnection.Add(textFileLine); // Adds Playlist Path that has no music in it
+                        }
+                        else
+                        {
+                            for (int i = 0; i < folderNames.Length; i++)
+                            {
+                                fileConnection.Add(folderNames[i]); // Adds Path of Playlist and music in it
+                            }
+                        }                       
+                    }                 
                 }
             }
             readTextFile.Close();

@@ -41,6 +41,7 @@ namespace Music_Player
             this.btnSelectFolder = new System.Windows.Forms.Button();
             this.lblSelectFolder = new System.Windows.Forms.Label();
             this.lblDefaultLocation = new System.Windows.Forms.Label();
+            this.lblMusicShow = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // txtPlaylist
@@ -82,9 +83,9 @@ namespace Music_Player
             // 
             // btnUpload
             // 
-            this.btnUpload.Location = new System.Drawing.Point(11, 27);
+            this.btnUpload.Location = new System.Drawing.Point(12, 24);
             this.btnUpload.Name = "btnUpload";
-            this.btnUpload.Size = new System.Drawing.Size(99, 23);
+            this.btnUpload.Size = new System.Drawing.Size(99, 25);
             this.btnUpload.TabIndex = 5;
             this.btnUpload.Text = "Upload";
             this.btnUpload.UseVisualStyleBackColor = true;
@@ -102,7 +103,7 @@ namespace Music_Player
             // cmbSelectPlaylist
             // 
             this.cmbSelectPlaylist.FormattingEnabled = true;
-            this.cmbSelectPlaylist.Location = new System.Drawing.Point(12, 56);
+            this.cmbSelectPlaylist.Location = new System.Drawing.Point(12, 86);
             this.cmbSelectPlaylist.Name = "cmbSelectPlaylist";
             this.cmbSelectPlaylist.Size = new System.Drawing.Size(148, 21);
             this.cmbSelectPlaylist.TabIndex = 7;
@@ -111,7 +112,7 @@ namespace Music_Player
             // lblShowDo
             // 
             this.lblShowDo.AutoSize = true;
-            this.lblShowDo.Location = new System.Drawing.Point(117, 27);
+            this.lblShowDo.Location = new System.Drawing.Point(10, 64);
             this.lblShowDo.Name = "lblShowDo";
             this.lblShowDo.Size = new System.Drawing.Size(35, 13);
             this.lblShowDo.TabIndex = 8;
@@ -121,11 +122,12 @@ namespace Music_Player
             // 
             this.lstMusicDisplay.FormattingEnabled = true;
             this.lstMusicDisplay.HorizontalScrollbar = true;
-            this.lstMusicDisplay.Location = new System.Drawing.Point(237, 8);
+            this.lstMusicDisplay.Location = new System.Drawing.Point(272, 17);
             this.lstMusicDisplay.Name = "lstMusicDisplay";
-            this.lstMusicDisplay.Size = new System.Drawing.Size(130, 147);
+            this.lstMusicDisplay.Size = new System.Drawing.Size(139, 134);
             this.lstMusicDisplay.TabIndex = 9;
             this.lstMusicDisplay.TabStop = false;
+            this.lstMusicDisplay.SelectedIndexChanged += new System.EventHandler(this.lstMusicDisplay_SelectedIndexChanged);
             // 
             // btnSelectFolder
             // 
@@ -155,13 +157,23 @@ namespace Music_Player
             this.lblDefaultLocation.TabIndex = 12;
             this.lblDefaultLocation.Text = "tell default location";
             // 
+            // lblMusicShow
+            // 
+            this.lblMusicShow.AutoSize = true;
+            this.lblMusicShow.Location = new System.Drawing.Point(267, 1);
+            this.lblMusicShow.Name = "lblMusicShow";
+            this.lblMusicShow.Size = new System.Drawing.Size(119, 13);
+            this.lblMusicShow.TabIndex = 13;
+            this.lblMusicShow.Text = "Will be added to Playlist";
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.ClientSize = new System.Drawing.Size(369, 160);
+            this.ClientSize = new System.Drawing.Size(414, 160);
             this.ControlBox = false;
+            this.Controls.Add(this.lblMusicShow);
             this.Controls.Add(this.lblDefaultLocation);
             this.Controls.Add(this.lblSelectFolder);
             this.Controls.Add(this.btnSelectFolder);
@@ -201,5 +213,6 @@ namespace Music_Player
         private System.Windows.Forms.Button btnSelectFolder;
         private System.Windows.Forms.Label lblSelectFolder;
         private System.Windows.Forms.Label lblDefaultLocation;
+        private System.Windows.Forms.Label lblMusicShow;
     }
 }

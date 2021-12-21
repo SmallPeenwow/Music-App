@@ -15,9 +15,9 @@ namespace Music_Player
     {
         private int value; // Used to display if Create or Delete or Add muisc controls will be displayed and used
 
-        List<string> dirCurrent = new List<string>(); 
+        List<string> dirCurrent = new List<string>();
 
-        string musicFileName;
+        Dictionary<string, string> musicFileName = new Dictionary<string, string>(); // Will store the Path of the music and music name
 
         string playlistFolder = ""; // Used to store the path to the Select Folder 
 
@@ -56,11 +56,33 @@ namespace Music_Player
                 cmbSelectPlaylist.TabStop = false;
                 lstMusicDisplay.Visible = false;
                 lstMusicDisplay.Enabled = false;
-                //lblSelectFolder.Text = "Your Playlist will be stored\n in a folder of your choice";
                 lblSelectFolder.Text = "";
                 lblDefaultLocation.Text = "By not selecting a folder your Playlist will be given\n the default location in your Music folder";
+                txtPlaylist.TabIndex = 0;
+                btnSelectFolder.TabIndex = 1;
+                btnConfirm.TabIndex = 2;
+                btnCancel.TabIndex = 3;
 
                 this.Size = new Size(280, 199);
+            }
+            else if(value == 2)
+            {
+                btnSelectFolder.Enabled = false;
+                btnSelectFolder.Visible = false;
+                lblDefaultLocation.Visible = false;
+                lblSelectFolder.Visible = false;
+                lblTellLength.Text = "You can select your music by using the Upload button";
+                txtPlaylist.Visible = false;
+                txtPlaylist.Enabled = false;
+                btnUpload.TabIndex = 0;
+                cmbSelectPlaylist.TabIndex = 1;
+                lblShowDo.Text = "Select a Playlist from the drop that you wish to\nadd your music to";
+                btnConfirm.TabIndex = 2;
+                btnCancel.TabIndex = 3;
+                cmbSelectPlaylist.DropDownStyle = ComboBoxStyle.DropDownList;
+                lstMusicDisplay.SelectionMode = SelectionMode.One;
+
+                LoadComboBox();
             }
             else
             {
@@ -78,10 +100,12 @@ namespace Music_Player
                 btnUpload.Visible = value == 3 ? btnUpload.Visible = false : btnUpload.Visible = true;
                 lblShowDo.Text = value == 3 ? lblShowDo.Text = "" : lblShowDo.Text = "Select a Playlist first!";
 
+                LoadComboBox();
+
                 //string[] fileSplits;
-                
+
                 //string[] folderName = Directory.GetDirectories(dirCurrent, "*", SearchOption.AllDirectories);
-                     
+
                 //for (int i = 0; i < folderName.Length; i++)
                 //{
                 //    if (folderName[i].Contains("Playlist"))
@@ -91,6 +115,33 @@ namespace Music_Player
                 //        cmbSelectPlaylist.Items.Add(fileSplits[fileSplits.Length - 1]);
                 //    }
                 //}                            
+            }
+        }
+
+        // used to populate the combobox
+        private void LoadComboBox()
+        {
+            HashSet<string> playlistDisplay = new HashSet<string>();
+
+            string[] addToHash;
+
+            for(int i = 0; i < dirCurrent.Count; i++)
+            {
+                addToHash = dirCurrent[i].Split('\\', ':');
+
+                if (dirCurrent[i].Contains(".mp3"))
+                {                    
+                    playlistDisplay.Add(addToHash[addToHash.Length - 2]);
+                }
+                else
+                {
+                    playlistDisplay.Add(addToHash[addToHash.Length - 1]);
+                }
+            }
+
+            for(int x = 0; x < playlistDisplay.Count; x++)
+            {
+                cmbSelectPlaylist.Items.Add(playlistDisplay.ElementAt(x));
             }
         }
 
@@ -139,7 +190,7 @@ namespace Music_Player
                         //playlistFolder = Environment.GetFolderPath(defaultFolder);
 
                         playlistFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);// Gets default location which is the user Music Folder
-
+                        
                         CreatePlaylist(playlistFolder);
                     }
                 }
@@ -156,7 +207,7 @@ namespace Music_Player
             else if (value == 2)
             {
                 //File.Move(fileContent, newFileLocation);
-                MessageBox.Show("Song was added successfully", "Success", MessageBoxButtons.OK);
+                MessageBox.Show("Music was added successfully", "Success", MessageBoxButtons.OK);
                 this.Close();
             }
             else
@@ -185,17 +236,19 @@ namespace Music_Player
             string newPath = folderName + "\\" + txtPlaylist.Text;
 
             if (!Directory.Exists(newPath))
-            {
-                Directory.CreateDirectory(newPath); // Creates the Folder loaction
-
+            {               
                 WriteToTextFile(newPath);
+           
+                Directory.CreateDirectory(newPath); // Creates the Folder loaction
 
                 MessageBox.Show("Playlist was Created", "Success", MessageBoxButtons.OK);
                 this.Close();
+               
+                MessageBox.Show("The playlist already exists in this folder", "Create Playlist", MessageBoxButtons.OK);                             
             }
             else
             {
-                MessageBox.Show("The Folder in which you are stroring the Playlist already exists", "Create Playlist", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("The Folder in which you are storing the Playlist already exists", "Create Playlist", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }         
         }
 
@@ -208,10 +261,11 @@ namespace Music_Player
             string pathFiletext = pathSearch.Substring(0, indexOfBinPath);
             string[] getfile = Directory.GetFiles(pathFiletext, "PlaylistAndSong*", SearchOption.AllDirectories); // Gest the textfile location named PlaylistAndSong
 
-            StreamWriter writeUrlPath = new StreamWriter(getfile[0], true);
+            StreamWriter writeUrlPath = new StreamWriter(getfile[0], append: true);
 
             writeUrlPath.WriteLine(urlPath);
             writeUrlPath.Close();
+            writeUrlPath.Dispose();                  
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -239,31 +293,50 @@ namespace Music_Player
             try
             {               
                 OpenFileDialog openFile = new OpenFileDialog();
-
-                //string filePath = Environment.SpecialFolder.UserProfile + "\\Downloads"; // Add ToString() might work
+               
+                string filePath = Environment.SpecialFolder.UserProfile + "\\Downloads"; // Add ToString() might work
                 //openFile.InitialDirectory = filePath;
                 openFile.Title = "Add Song";
                 openFile.Filter = "Music(.mp3)|*.mp3";
+                openFile.Multiselect = true;
 
                 if (openFile.ShowDialog() == DialogResult.OK)
-                {                   
-                    string fileSong = openFile.FileName.Split('\\').Last();
+                {
+                    //string fileSong = openFile.FileName.Split('\\').Last();
 
-                    if (fileSong.Contains(".mp3"))
+                    string[] fileSong = openFile.FileNames;
+
+                    for(int i = 0; i < fileSong.Length; i++)
                     {
-                        //fileContent = openFile.FileName;
-                        musicFileName = openFile.FileName;
+                        string musicName = fileSong[i].Split('\\').Last().Replace(".mp3", "");
 
-                        string newFileLocation = dirCurrent + cmbSelectPlaylist.SelectedItem.ToString() + "\\" + fileSong;
+                        lstMusicDisplay.Items.Add(musicName);
+
+                        musicFileName.Add(fileSong[i], musicName);
+                    }
+
+                    //if (fileSong.Contains(".mp3"))
+                   // {
+                        //string valueMusic = "";
+
+                        //valueMusic = openFile.FileName;
+
+                        //musicFileName.Add(valueMusic, fileSong);
+
+
+                        //fileContent = openFile.FileName;
+                        //musicFileName = openFile.FileName;
+
+                        //string newFileLocation = dirCurrent + cmbSelectPlaylist.SelectedItem.ToString() + "\\" + fileSong;
 
                         //File.Move(fileContent, newFileLocation);
                         //MessageBox.Show("Song was added successfully", "Success", MessageBoxButtons.OK);
                         //this.Close();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Select a Song that is a  \"mp3\"", "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    //}
+                    //else
+                    //{
+                    //    MessageBox.Show("Select a Song that is a  \"mp3\"", "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    //}
                 }                                         
             }
             catch (Exception fileOpenError)
@@ -301,6 +374,24 @@ namespace Music_Player
                 playlistFolder = browserFolders.SelectedPath;
                 lblDefaultLocation.Text = "";
                 lblSelectFolder.Text = "Your Playlist will be stored\n in the folder of your choice";
+            }
+        }
+
+        private void lstMusicDisplay_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstMusicDisplay.SelectedIndex != -1)
+            {               
+                DialogResult checkIfRemove = MessageBox.Show("By selecting the music you will be removing it from the\nPlaylist you want to store it.\n\nDo you wish to proceed with this?", "Add Music", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                lstMusicDisplay.ClearSelected();
+
+                if (DialogResult.Yes == checkIfRemove) // Removes the Path and music name from Dictionary and removes from listbox 
+                {                  
+                    //string deleteKey = musicFileName.FirstOrDefault(x => x.Value == lstMusicDisplay.SelectedItem.ToString()).Key;
+                    musicFileName.Remove(musicFileName.FirstOrDefault(x => x.Value == lstMusicDisplay.SelectedItem.ToString()).Key); // Remvoes the Key from the Dictionary by getting the value
+                    //musicFileName.Remove(deleteKey);
+                    lstMusicDisplay.Items.Remove(lstMusicDisplay.SelectedItem);
+                }              
             }
         }
     }
