@@ -208,6 +208,10 @@ namespace Music_Player
             {
                 MessageBox.Show("No Playlist found\nYou can go to the Menu and click on Create Playlist", "Our Music", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+            else if (musicListBox.Items.Count == 0)
+            {
+                MessageBox.Show("No music to display.\nGo to the menu and then click on Add Music", "Our Music", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
 
             ListSelecter.Items.Clear();
             musicValue.Clear();
@@ -258,12 +262,7 @@ namespace Music_Player
                 string playlistName = dropDownAdd.ElementAt(x);
                 //ListSelecter.Items.Remove(playlistName); // Removes previous Playlist names on call of method
                 ListSelecter.Items.Add(playlistName);
-            }
-
-            if (musicListBox.Items.Count == 0)
-            {
-                MessageBox.Show("No music to display.\nGo to the menu and then click on Add Music", "Our Music", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+            }           
         }
         
 
