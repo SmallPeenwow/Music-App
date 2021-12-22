@@ -43,10 +43,10 @@ namespace Music_Player
             while (!(readTextFile.EndOfStream)) // Reads all the lines in the textfile and stops when gets to the end of the textfile text
             {
                 if (readTextFile != null)
-                {
-                    textFileLine = readTextFile.ReadLine();// Gest Path of playlist
-
-                    if (textFileLine != "Mp3 Music will go")
+                {                  
+                     textFileLine = readTextFile.ReadLine();// Gets Path of playlist
+                    
+                    if (textFileLine != "Mp3 Music will go" && textFileLine != "")
                     {                      
                         folderNames = Directory.GetFiles(textFileLine, "*", SearchOption.TopDirectoryOnly);// Gets the music in the Playlist
 

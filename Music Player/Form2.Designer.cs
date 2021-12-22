@@ -54,7 +54,7 @@ namespace Music_Player
             // 
             // btnConfirm
             // 
-            this.btnConfirm.Location = new System.Drawing.Point(12, 126);
+            this.btnConfirm.Location = new System.Drawing.Point(11, 126);
             this.btnConfirm.Name = "btnConfirm";
             this.btnConfirm.Size = new System.Drawing.Size(99, 29);
             this.btnConfirm.TabIndex = 1;
@@ -83,7 +83,7 @@ namespace Music_Player
             // 
             // btnUpload
             // 
-            this.btnUpload.Location = new System.Drawing.Point(12, 24);
+            this.btnUpload.Location = new System.Drawing.Point(11, 28);
             this.btnUpload.Name = "btnUpload";
             this.btnUpload.Size = new System.Drawing.Size(99, 25);
             this.btnUpload.TabIndex = 5;
@@ -160,11 +160,11 @@ namespace Music_Player
             // lblMusicShow
             // 
             this.lblMusicShow.AutoSize = true;
-            this.lblMusicShow.Location = new System.Drawing.Point(267, 1);
+            this.lblMusicShow.Location = new System.Drawing.Point(270, 1);
             this.lblMusicShow.Name = "lblMusicShow";
-            this.lblMusicShow.Size = new System.Drawing.Size(119, 13);
+            this.lblMusicShow.Size = new System.Drawing.Size(138, 13);
             this.lblMusicShow.TabIndex = 13;
-            this.lblMusicShow.Text = "Will be added to Playlist";
+            this.lblMusicShow.Text = "Remove music by clicking it\r\n";
             // 
             // Form2
             // 

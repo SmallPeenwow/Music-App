@@ -21,6 +21,8 @@ namespace Music_Player
 
         string playlistFolder = ""; // Used to store the path to the Select Folder 
 
+        string copyToFolderPath; // Used to store the playlist path
+
         public Form2(int value, List<string> connectDir)
         {
             InitializeComponent();
@@ -71,13 +73,16 @@ namespace Music_Player
                 btnSelectFolder.Visible = false;
                 lblDefaultLocation.Visible = false;
                 lblSelectFolder.Visible = false;
-                lblTellLength.Text = "You can select your music by using the Upload button";
+                lblTellLength.Text = "Pressing the Upload button will get the\nmusic you want stored into your playlist";
+                lblTellLength.Location = new Point(11, 1);
                 txtPlaylist.Visible = false;
                 txtPlaylist.Enabled = false;
                 btnUpload.TabIndex = 0;
                 cmbSelectPlaylist.TabIndex = 1;
                 lblShowDo.Text = "Select a Playlist from the drop that you wish to\nadd your music to";
+                lblShowDo.Location = new Point(10, 58);
                 btnConfirm.TabIndex = 2;
+                btnConfirm.Enabled = false;
                 btnCancel.TabIndex = 3;
                 cmbSelectPlaylist.DropDownStyle = ComboBoxStyle.DropDownList;
                 lstMusicDisplay.SelectionMode = SelectionMode.One;
@@ -171,11 +176,7 @@ namespace Music_Player
                     // if chechFailed couldn't convert to true it would be false still and then display the correct error message
                 }
 
-                //if (!(patternMatch.IsMatch(textBoxMatch)) || string.IsNullOrWhiteSpace(txtPlaylist.Text) || Directory.Exists(txtPlaylist.Text))
-                //{
-                //    MessageBox.Show("Make sure you have entered in a valid Playlist name longer than 4 characters.\n\nPlaylist could already Exist.", "Not Correct", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //}
-                if (checkFailed != true)
+                if (checkFailed != true) // Checks which error message will be displayed
                 {
                     MessageBox.Show(alertError, "Not Correct", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -185,10 +186,6 @@ namespace Music_Player
 
                     if(makeSureFolder == DialogResult.Yes)
                     {
-                        //Environment.SpecialFolder defaultFolder = Environment.SpecialFolder.MyMusic; 
-                        //string name = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);                       
-                        //playlistFolder = Environment.GetFolderPath(defaultFolder);
-
                         playlistFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);// Gets default location which is the user Music Folder
                         
                         CreatePlaylist(playlistFolder);
@@ -197,18 +194,29 @@ namespace Music_Player
                 else
                 {
                     CreatePlaylist(playlistFolder);
-
-                    //string newPath = dirCurrent + txtPlaylist.Text;
-                    //Directory.CreateDirectory(newPath);
-                    //MessageBox.Show("Playlist was Created", "Success", MessageBoxButtons.OK);
-                    //this.Close();
                 }
             }
             else if (value == 2)
-            {
-                //File.Move(fileContent, newFileLocation);
-                MessageBox.Show("Music was added successfully", "Success", MessageBoxButtons.OK);
-                this.Close();
+            {   
+                if(lstMusicDisplay.Items.Count != -1) // Copies the music over to the Playlist selected
+                {
+                    for (int i = 0; i < lstMusicDisplay.Items.Count; i++)
+                    {
+                        KeyValuePair<string, string> muiscPath = musicFileName.ElementAt(i);
+                        string sendCopyOfMuisc = muiscPath.Key; // Path fo the music
+                        string musicCopyName = muiscPath.Value; // music name
+
+                        string newFileLocation = copyToFolderPath + "\\" + musicCopyName + ".mp3"; // Combines music to new path location
+
+                        File.Copy(sendCopyOfMuisc, newFileLocation);
+                    }
+                    MessageBox.Show("Music was added successfully", "Add Music", MessageBoxButtons.OK);
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("No music has been select to go into the playlist", "Add Muisc", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             else
             {
@@ -242,9 +250,7 @@ namespace Music_Player
                 Directory.CreateDirectory(newPath); // Creates the Folder loaction
 
                 MessageBox.Show("Playlist was Created", "Success", MessageBoxButtons.OK);
-                this.Close();
-               
-                MessageBox.Show("The playlist already exists in this folder", "Create Playlist", MessageBoxButtons.OK);                             
+                this.Close();                                                          
             }
             else
             {
@@ -261,11 +267,12 @@ namespace Music_Player
             string pathFiletext = pathSearch.Substring(0, indexOfBinPath);
             string[] getfile = Directory.GetFiles(pathFiletext, "PlaylistAndSong*", SearchOption.AllDirectories); // Gest the textfile location named PlaylistAndSong
 
-            StreamWriter writeUrlPath = new StreamWriter(getfile[0], append: true);
-
-            writeUrlPath.WriteLine(urlPath);
-            writeUrlPath.Close();
-            writeUrlPath.Dispose();                  
+            using (StreamWriter writeUrlPath = File.AppendText(getfile[0]))
+            {
+                writeUrlPath.WriteLine(urlPath);
+                writeUrlPath.Close();
+                writeUrlPath.Dispose();
+            }                             
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -295,15 +302,12 @@ namespace Music_Player
                 OpenFileDialog openFile = new OpenFileDialog();
                
                 string filePath = Environment.SpecialFolder.UserProfile + "\\Downloads"; // Add ToString() might work
-                //openFile.InitialDirectory = filePath;
                 openFile.Title = "Add Song";
                 openFile.Filter = "Music(.mp3)|*.mp3";
                 openFile.Multiselect = true;
 
                 if (openFile.ShowDialog() == DialogResult.OK)
                 {
-                    //string fileSong = openFile.FileName.Split('\\').Last();
-
                     string[] fileSong = openFile.FileNames;
 
                     for(int i = 0; i < fileSong.Length; i++)
@@ -314,29 +318,6 @@ namespace Music_Player
 
                         musicFileName.Add(fileSong[i], musicName);
                     }
-
-                    //if (fileSong.Contains(".mp3"))
-                   // {
-                        //string valueMusic = "";
-
-                        //valueMusic = openFile.FileName;
-
-                        //musicFileName.Add(valueMusic, fileSong);
-
-
-                        //fileContent = openFile.FileName;
-                        //musicFileName = openFile.FileName;
-
-                        //string newFileLocation = dirCurrent + cmbSelectPlaylist.SelectedItem.ToString() + "\\" + fileSong;
-
-                        //File.Move(fileContent, newFileLocation);
-                        //MessageBox.Show("Song was added successfully", "Success", MessageBoxButtons.OK);
-                        //this.Close();
-                    //}
-                    //else
-                    //{
-                    //    MessageBox.Show("Select a Song that is a  \"mp3\"", "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    //}
                 }                                         
             }
             catch (Exception fileOpenError)
@@ -355,8 +336,16 @@ namespace Music_Player
             {
                 if (cmbSelectPlaylist.SelectedItem != null)
                 {
-                    //btnUpload.Enabled = true;
+                    for(int i = 0; i < dirCurrent.Count; i++)
+                    {
+                        if (dirCurrent[i].Contains(cmbSelectPlaylist.SelectedItem.ToString()))
+                        {
+                            copyToFolderPath = dirCurrent.ElementAt(i);
+                            break;
+                        }
+                    }
                     lblShowDo.Visible = false;
+                    btnConfirm.Enabled = true;
                 }
             }            
         }
@@ -365,11 +354,9 @@ namespace Music_Player
         {
             FolderBrowserDialog browserFolders = new FolderBrowserDialog();
 
-            //Environment.SpecialFolder openDefault = Environment.SpecialFolder.MyMusic;
-            //browserFolders.RootFolder = openDefault;
             browserFolders.Description = "Select Folder";
 
-            if(browserFolders.ShowDialog() == DialogResult.OK)
+            if(browserFolders.ShowDialog() == DialogResult.OK) // Lets you select which folder to store your playlist in
             {
                 playlistFolder = browserFolders.SelectedPath;
                 lblDefaultLocation.Text = "";
@@ -387,9 +374,8 @@ namespace Music_Player
 
                 if (DialogResult.Yes == checkIfRemove) // Removes the Path and music name from Dictionary and removes from listbox 
                 {                  
-                    //string deleteKey = musicFileName.FirstOrDefault(x => x.Value == lstMusicDisplay.SelectedItem.ToString()).Key;
                     musicFileName.Remove(musicFileName.FirstOrDefault(x => x.Value == lstMusicDisplay.SelectedItem.ToString()).Key); // Remvoes the Key from the Dictionary by getting the value
-                    //musicFileName.Remove(deleteKey);
+
                     lstMusicDisplay.Items.Remove(lstMusicDisplay.SelectedItem);
                 }              
             }
