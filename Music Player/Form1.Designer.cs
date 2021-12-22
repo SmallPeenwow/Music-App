@@ -114,8 +114,8 @@ namespace Music_Player
             this.previousBtn.UseVisualStyleBackColor = true;
             this.previousBtn.Click += new System.EventHandler(this.previousBtn_Click);
             this.previousBtn.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
-            this.previousBtn.MouseEnter += new System.EventHandler(this.CursorChange);
             this.previousBtn.MouseLeave += new System.EventHandler(this.CursorBack);
+            this.previousBtn.MouseHover += new System.EventHandler(this.CursorChange);
             // 
             // nextBtn
             // 
@@ -152,8 +152,8 @@ namespace Music_Player
             this.ListSelecter.TabIndex = 0;
             this.ListSelecter.SelectedIndexChanged += new System.EventHandler(this.ListSelecter_SelectedIndexChanged);
             this.ListSelecter.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
-            this.ListSelecter.MouseEnter += new System.EventHandler(this.CursorChange);
             this.ListSelecter.MouseLeave += new System.EventHandler(this.CursorBack);
+            this.ListSelecter.MouseHover += new System.EventHandler(this.CursorChange);
             // 
             // playSelectlbl
             // 

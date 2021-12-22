@@ -47,24 +47,95 @@ namespace Music_Player
                      textFileLine = readTextFile.ReadLine();// Gets Path of playlist
                     
                     if (textFileLine != "Mp3 Music will go" && textFileLine != "")
-                    {                      
-                        folderNames = Directory.GetFiles(textFileLine, "*", SearchOption.TopDirectoryOnly);// Gets the music in the Playlist
+                    {
+                        if (Directory.Exists(textFileLine))
+                        {
+                            folderNames = Directory.GetFiles(textFileLine, "*", SearchOption.TopDirectoryOnly);// Gets the music in the Playlist
 
-                        if(folderNames == null || folderNames.Length == 0)// Checks if playlist has no music
-                        {
-                            fileConnection.Add(textFileLine); // Adds Playlist Path that has no music in it
-                        }
-                        else
-                        {
-                            for (int i = 0; i < folderNames.Length; i++)
+                            if (folderNames == null || folderNames.Length == 0 || folderNames.Contains(".jpg"))// Checks if playlist has no music
                             {
-                                fileConnection.Add(folderNames[i]); // Adds Path of Playlist and music in it
+                                fileConnection.Add(textFileLine); // Adds Playlist Path that has no music in it
                             }
-                        }                       
+                            else
+                            {
+                                for (int i = 0; i < folderNames.Length; i++)
+                                {
+                                    if (folderNames[i].Contains(".mp3"))
+                                    {
+                                        fileConnection.Add(folderNames[i]); // Adds Path of Playlist and music in it
+                                    }                                  
+                                }
+                            }
+                        }                                       
                     }                 
                 }
             }
             readTextFile.Close();
+        }
+
+        // Wiil be used to write over the textfile and give it new paths with path to playlist selected removed
+        public Connection(List<string> pathsPutTextfile, string compareToRemove)
+        {
+            string[] folderNames;
+            HashSet<string> pathsToPutBack = new HashSet<string>();
+            HashSet<string> pathsToDelete = new HashSet<string>();
+
+            string pathTextFile = Directory.GetCurrentDirectory();
+
+            string cutEndPath = "Music Player";
+            int indexOffPath = pathTextFile.IndexOf(cutEndPath);
+
+            pathTextFile = pathTextFile.Substring(0, indexOffPath);
+            string[] playlistFile = Directory.GetFiles(pathTextFile, "PlaylistAndSong*", SearchOption.AllDirectories); // Gets the path to the textfile PlaylistAndSong          
+
+            for(int i = 0; i < pathsPutTextfile.Count; i++)
+            {
+                if (!pathsPutTextfile[i].Contains(compareToRemove))
+                {
+                    if (pathsPutTextfile[i].Contains(".mp3"))
+                    {
+                        folderNames = pathsPutTextfile[i].Split('\\');
+                        folderNames = folderNames.Take(folderNames.Length - 1).ToArray(); // Takes all the elements in the array except the last one
+
+                        string joinArray = String.Join("\\", folderNames); // Joins the array into one string using this \
+
+                        pathsToPutBack.Add(joinArray);
+                    }
+                    else
+                    {
+                        pathsToPutBack.Add(pathsPutTextfile[i]);
+                    }                 
+                }
+                else
+                {                   
+                    if (pathsPutTextfile[i].Contains(".mp3"))
+                    {
+                        folderNames = pathsPutTextfile[i].Split('\\');
+                        pathsToDelete.Add(String.Join("\\", folderNames.Take(folderNames.Length - 1).ToArray()));
+                    }
+                    else
+                    {
+                        pathsToDelete.Add(pathsPutTextfile[i]);
+                    }                   
+                }
+            }
+          
+            for (int j = 0; j < pathsToDelete.Count; j++) // Will be used to delete the Directory 
+            {
+                string deleteFile = pathsToDelete.ElementAt(j);
+                Directory.Delete(deleteFile, true);
+                //Directory.Delete(deleteFile); // I used true to delete the files the directory but could also use a try catch to tell the user to move the files inside it to another location
+            }
+
+            StreamWriter writeToTextfile = new StreamWriter(playlistFile[0]);
+
+            for (int h = 0; h < pathsToPutBack.Count; h++) // Gets all the paths to put back into the textfile after the playlist selected is chosen to be deleted
+            {
+                string fileWriteLine = pathsToPutBack.ElementAt(h);
+                writeToTextfile.WriteLine(fileWriteLine);
+            }
+            writeToTextfile.Close();
+            writeToTextfile.Dispose();
         }
 
         // Sends List of all the URL paths to Fomr1 to be loaded into the Comobobox and ListBox

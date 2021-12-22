@@ -30,6 +30,8 @@ namespace Music_Player
 
         List<string> currentFilePath = new List<string>();
 
+        int timerCheck = 0; // Checks to see if loop is active
+
         private Connection connection;
 
         IDictionary<string, Dictionary<string, string>> musicValue = new Dictionary<string, Dictionary<string, string>>();
@@ -183,7 +185,6 @@ namespace Music_Player
             musicIndex.Visible = false;
             musicListBox.SelectionMode = SelectionMode.One;
             currentSonglbl.Text = "";
-            ListSelecter.Items.Add("All");
 
             try
             {                
@@ -196,10 +197,7 @@ namespace Music_Player
         }
         //private
         public void loadPlaylistSongs()
-        {
-            musicValue.Clear();
-            musicListBox.Items.Clear();
-
+        {           
             string pathSearch = Directory.GetCurrentDirectory();
             connection = new Connection(pathSearch);
             currentFilePath = connection.fullPathName();
@@ -208,8 +206,13 @@ namespace Music_Player
 
             if (currentFilePath.Any() != true)// Checks if List which contains textfile URLs is empty and if is empty displays this message
             {
-                MessageBox.Show("No music found\nYou can go to the Menu and create a playlist\nthen you can add your music into your playlist", "Music", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("No Playlist found\nYou can go to the Menu and click on Create Playlist", "Our Music", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+
+            ListSelecter.Items.Clear();
+            musicValue.Clear();
+            musicListBox.Items.Clear();
+            ListSelecter.Items.Add("All");
 
             for (int i = 0; i < currentFilePath.Count; i++)
             {
@@ -218,39 +221,51 @@ namespace Music_Player
                 string urlPath;                
               
                 fileSplits = currentFilePath[i].Split('\\', ':');
-
-                if (fileSplits[fileSplits.Length - 1].Contains(".mp3"))// If URL path contains music
+                try
                 {
-                    song = fileSplits[fileSplits.Length - 1].Replace(".mp3", "");
-                    playlist = fileSplits[fileSplits.Length - 2];
-                    urlPath = currentFilePath[i];
+                    if (fileSplits[fileSplits.Length - 1].Contains(".mp3"))// If URL path contains music
+                    {
+                        song = fileSplits[fileSplits.Length - 1].Replace(".mp3", "");
+                        playlist = fileSplits[fileSplits.Length - 2];
+                        urlPath = currentFilePath[i];
 
-                    dropDownAdd.Add(playlist);
-                    musicListBox.Items.Add(song);
+                        dropDownAdd.Add(playlist);
+                        musicListBox.Items.Add(song);
 
-                    musicValue.Add(urlPath, new Dictionary<string, string>());
-                    musicValue[urlPath].Add(song, playlist);
+                        musicValue.Add(urlPath, new Dictionary<string, string>());
+                        musicValue[urlPath].Add(song, playlist);
+                    }
+                    else// For when URL only has Playlist
+                    {
+                        song = "";
+                        playlist = fileSplits[fileSplits.Length - 1];
+                        urlPath = currentFilePath[i];
+
+                        dropDownAdd.Add(playlist);
+
+                        musicValue.Add(urlPath, new Dictionary<string, string>());
+                        musicValue[urlPath].Add(song, playlist);
+                    }
                 }
-                else// For when URL only has Playlist
+                catch (Exception oops)
                 {
-                    song = "";
-                    playlist = fileSplits[fileSplits.Length - 1];
-                    urlPath = currentFilePath[i];
-                  
-                    dropDownAdd.Add(playlist);
-
-                    musicValue.Add(urlPath, new Dictionary<string, string>());
-                    musicValue[urlPath].Add(song, playlist);                                  
-                }                                                               
+                    // Will do nothing if duplicate
+                }
             }
 
             for (int x = 0; x < dropDownAdd.Count; x++)// Adds Playlist names to dropdown by using hashset that doesn't duplicate elements
             {
                 string playlistName = dropDownAdd.ElementAt(x);
-                ListSelecter.Items.Remove(playlistName); // Removes previous Playlist names on call of method
+                //ListSelecter.Items.Remove(playlistName); // Removes previous Playlist names on call of method
                 ListSelecter.Items.Add(playlistName);
             }
+
+            if (musicListBox.Items.Count == 0)
+            {
+                MessageBox.Show("No music to display.\nGo to the menu and then click on Add Music", "Our Music", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
+        
 
         private void pause_Click(object sender, EventArgs e)
         {
@@ -287,7 +302,7 @@ namespace Music_Player
             try
             { 
                 if (ListSelecter.SelectedItem.ToString() == "All")// Calls loadPlaylistSong method to reload all the songs and playlist
-                {
+                {                   
                     storeOfPlayListSelect.Text = "All";
                     loadPlaylistSongs();
                 }
@@ -417,13 +432,7 @@ namespace Music_Player
                 playlistSelected = getPlaylistForPlaying(playlistSelected);
                 storeOfPlayListSelect.Text = playlistSelected;
                 time = 0; // Sets the time of the song to zero so the current song select by the user can be played
-            }        
-                     
-            // Sets the time of the song to zero so the current song select by the user can be played
-            //if (musicListBox.SelectedIndex > -1)
-            //{
-            //    time = 0;
-            //}
+            }                            
         }
 
         // Checks for values and then sends to playMusic method
@@ -517,9 +526,7 @@ namespace Music_Player
             else
             {
                 NoMusicPlaying();
-            }
-           
-            
+            }                    
             btnMute.Enabled = true;
         }
 
@@ -540,12 +547,14 @@ namespace Music_Player
                     player.settings.setMode("loop", true);
                     btnLoopSongs.Text = "Song on loop";
                     btnLoopClicked = 2;
+                    timerCheck = 1;
                 }
                 else
                 {
                     player.settings.setMode("loop", false);
                     btnLoopSongs.Text = "Loop";
                     btnLoopClicked = 1;
+                    timerCheck = 0;
                 }
             }
             else
@@ -571,9 +580,18 @@ namespace Music_Player
 
             if (thisNow > thisTime)
             {
-                lblsongDuration.Text = currentSeconds.ToString(@"mm\:ss");
-                timer.Stop();
-                lblsongDuration.Text = "";
+                if(timerCheck == 1)
+                {
+                    lblsongDuration.Text = "";
+                    timer.Stop();
+                    timer.Start();
+                }
+                else
+                {
+                    lblsongDuration.Text = currentSeconds.ToString(@"mm\:ss");
+                    timer.Stop();
+                    lblsongDuration.Text = "";
+                }             
             }
         }
 
