@@ -23,6 +23,10 @@ namespace Music_Player
 
         string copyToFolderPath; // Used to store the playlist path
 
+        private FetchAppPath fecthTextfilePath = new FetchAppPath(); // Gets the path to the textfile
+
+        string textfilePath = ""; // Used to store the path to the textfile
+
         public Form2(int value, List<string> connectDir)
         {
             InitializeComponent();
@@ -36,6 +40,8 @@ namespace Music_Player
             this.Text = nameForm;
 
             lblDisplay.Text = value == 1 ? lblDisplay.Text = "" : value == 2 ? lblDisplay.Text = "" : lblDisplay.Text = "Select playlist from the dropdown and then press\n the Confirm button to delete the Playlist";
+
+            textfilePath = fecthTextfilePath.appPathOnly();
         }
 
         private void Form2_Load(object sender, EventArgs e)
@@ -226,7 +232,7 @@ namespace Music_Player
                     DialogResult yesNo = MessageBox.Show("Are you sure you want to delete this playlist\nThe music inside the Playlist will be deleted also", "Delete Playlist", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if(DialogResult.Yes == yesNo)
                     {
-                        Connection deletePath = new Connection(dirCurrent, cmbSelectPlaylist.Text);
+                        Connection deletePath = new Connection(dirCurrent, cmbSelectPlaylist.Text, textfilePath); // Deletes playlist and the contents inside the folder
 
                         MessageBox.Show("Playlist was Deleted", "Delete Playlist", MessageBoxButtons.OK);
                         this.Close();
@@ -241,7 +247,7 @@ namespace Music_Player
 
         private void CreatePlaylist(string folderName) // Will Create the playlist in the specified location
         {
-            string newPath = folderName + "\\" + txtPlaylist.Text;
+            string newPath = folderName + "\\" + txtPlaylist.Text; // Replace
 
             if (!Directory.Exists(newPath))
             {               
@@ -255,23 +261,19 @@ namespace Music_Player
             else
             {
                 MessageBox.Show("The Folder in which you are storing the Playlist already exists", "Create Playlist", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                playlistFolder = "";
             }         
         }
 
         private void WriteToTextFile(string urlPath)// Will store the Url Path of the folder
         {
-            string pathSearch = Directory.GetCurrentDirectory();
-            string cutEndpath = "Music Player";
-            int indexOfBinPath = pathSearch.IndexOf(cutEndpath); // Gets the index of where the cut off for the URL begins
-
-            string pathFiletext = pathSearch.Substring(0, indexOfBinPath);
-            string[] getfile = Directory.GetFiles(pathFiletext, "PlaylistAndSong*", SearchOption.AllDirectories); // Gest the textfile location named PlaylistAndSong
+            string[] getfile = Directory.GetFiles(textfilePath, "PlaylistAndSong.txt*", SearchOption.AllDirectories); // Gest the textfile location named PlaylistAndSong
 
             using (StreamWriter writeUrlPath = File.AppendText(getfile[0]))
             {
                 writeUrlPath.WriteLine(urlPath);
+                writeUrlPath.Flush();
                 writeUrlPath.Close();
-                writeUrlPath.Dispose();
             }                             
         }
 
@@ -331,7 +333,7 @@ namespace Music_Player
             {
                 btnConfirm.Enabled = cmbSelectPlaylist.SelectedIndex != -1 ? btnConfirm.Enabled = true : btnConfirm.Enabled = false;
             }
-            else
+            else // Gets the path how playlist location
             {
                 if (cmbSelectPlaylist.SelectedItem != null)
                 {

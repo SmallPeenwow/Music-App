@@ -22,7 +22,7 @@ namespace Music_Player
             set { valueNumber = value; }
         }
 
-        protected virtual void OnDataAvailable(EventArgs e)
+        protected virtual void OnDataAvailable(EventArgs e) // Used to send the value picked from the combobox
         {
             EventHandler eh = DataAvailable;
             if (eh != null)
@@ -31,7 +31,7 @@ namespace Music_Player
             }
         }
 
-        public Settings()
+        public Settings() // Sets the numbers to select to send to Fomr1
         {
             InitializeComponent();
 
@@ -59,11 +59,6 @@ namespace Music_Player
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
-        }
-
-        private void Settings_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

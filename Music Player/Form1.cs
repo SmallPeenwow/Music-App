@@ -32,9 +32,11 @@ namespace Music_Player
 
         int timerCheck = 0; // Checks to see if loop is active
 
-        private Connection connection;
+        private Connection connection; // Retrieves the path of the muisc
 
-        IDictionary<string, Dictionary<string, string>> musicValue = new Dictionary<string, Dictionary<string, string>>();
+        private FetchAppPath fecthTextfilePath; // Gets the path of the textfile
+
+        IDictionary<string, Dictionary<string, string>> musicValue = new Dictionary<string, Dictionary<string, string>>(); // Stores the path to the folder and then the second dictionary stores the music and then the playlist
 
         public Form1()
         {
@@ -197,18 +199,20 @@ namespace Music_Player
         }
         //private
         public void loadPlaylistSongs()
-        {           
-            string pathSearch = Directory.GetCurrentDirectory();
-            connection = new Connection(pathSearch);
+        {
+            fecthTextfilePath = new FetchAppPath();
+            string pathSerach = fecthTextfilePath.fetchAppPath();
+            connection = new Connection(pathSerach);
             currentFilePath = connection.fullPathName();
 
             HashSet<string> dropDownAdd = new HashSet<string>();
+            string mpThreeCheck = currentFilePath.Where(x => x.Contains(".mp3")).FirstOrDefault();
 
             if (currentFilePath.Any() != true)// Checks if List which contains textfile URLs is empty and if is empty displays this message
             {
                 MessageBox.Show("No Playlist found\nYou can go to the Menu and click on Create Playlist", "Our Music", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            else if (musicListBox.Items.Count == 0)
+            else if (mpThreeCheck == null)
             {
                 MessageBox.Show("No music to display.\nGo to the menu and then click on Add Music", "Our Music", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -260,7 +264,6 @@ namespace Music_Player
             for (int x = 0; x < dropDownAdd.Count; x++)// Adds Playlist names to dropdown by using hashset that doesn't duplicate elements
             {
                 string playlistName = dropDownAdd.ElementAt(x);
-                //ListSelecter.Items.Remove(playlistName); // Removes previous Playlist names on call of method
                 ListSelecter.Items.Add(playlistName);
             }           
         }
