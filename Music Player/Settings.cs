@@ -41,7 +41,7 @@ namespace Music_Player
 
             cmbSelectNumber.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbSelectNumber.Items.AddRange(numbers);
-            lblDisplayValid.Text = "Select Volume you\nwant your music to\nminus or plus by";
+            lblDisplayValid.Text = "Select Volume you\nwant your music to\nincrease or decrease\nby";
         }
 
         private void btnConfirm_Click(object sender, EventArgs e)
